@@ -1,0 +1,33 @@
+---
+import Swoosh from '../ui/Swoosh.astro';
+import { t, type Lang } from '../../i18n';
+
+interface Props {
+  lang: Lang;
+}
+
+const { lang } = Astro.props;
+const d = t(lang);
+---
+<section class="sec" id="stack">
+  <Swoosh variant="b" />
+
+  <div class="wrap">
+    <h2>{d.nav.stack}</h2>
+
+    <dl class="stack">
+      {d.stack.groups.map((group) => (
+        <div>
+          <dt>{group.title}</dt>
+          <dd>
+            <ul class="words">
+              {group.items.map((item) => <li>{item}</li>)}
+            </ul>
+          </dd>
+        </div>
+      ))}
+    </dl>
+
+    <p class="note">{d.stack.note}</p>
+  </div>
+</section>

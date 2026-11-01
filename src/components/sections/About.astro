@@ -1,0 +1,32 @@
+---
+import Swoosh from '../ui/Swoosh.astro';
+import { t, type Lang } from '../../i18n';
+
+interface Props {
+  lang: Lang;
+}
+
+const { lang } = Astro.props;
+const d = t(lang);
+---
+<section class="sec" id="about">
+  <Swoosh variant="a" />
+
+  <div class="wrap">
+    <h2>{d.nav.about}</h2>
+
+    <div class="about">
+      <p class="statement">{d.about.p1}</p>
+      <p>{d.about.p2}</p>
+    </div>
+
+    <dl class="trio">
+      {d.about.facts.map((fact) => (
+        <div>
+          <dt>{fact.label}</dt>
+          <dd>{fact.value}</dd>
+        </div>
+      ))}
+    </dl>
+  </div>
+</section>

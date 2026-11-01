@@ -1,0 +1,28 @@
+---
+/**
+ * Página inicial completa em um idioma. As duas rotas (/ e /en/) usam este
+ * mesmo componente — só muda o `lang`.
+ */
+import Layout from '../layouts/Layout.astro';
+import Hero from './sections/Hero.astro';
+import About from './sections/About.astro';
+import Projects from './sections/Projects.astro';
+import Education from './sections/Education.astro';
+import Stack from './sections/Stack.astro';
+import Contact from './sections/Contact.astro';
+import type { Lang } from '../i18n';
+
+interface Props {
+  lang: Lang;
+}
+
+const { lang } = Astro.props;
+---
+<Layout lang={lang}>
+  <Hero lang={lang} />
+  <About lang={lang} />
+  <Projects lang={lang} />
+  <Education lang={lang} />
+  <Stack lang={lang} />
+  <Contact lang={lang} />
+</Layout>

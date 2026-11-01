@@ -1,0 +1,216 @@
+/* Peças reutilizáveis: botões, links, listas e variações de tom das seções. */
+
+/* ---------- Botões e links ---------- */
+
+.btn {
+  display: inline-block;
+  padding: 0.85rem 1.4rem;
+  background: var(--accent);
+  color: #fff;
+  border-radius: 6px;
+  font: 700 0.95rem var(--display);
+  text-decoration: none;
+}
+
+.btn:hover {
+  background: var(--ink);
+}
+
+.ulink {
+  font: 700 0.95rem var(--display);
+  text-underline-offset: 0.3em;
+}
+
+.ulink:hover {
+  color: var(--accent-t);
+}
+
+/* Grupo de ações (botão + links). */
+.acts {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.8rem 1.6rem;
+  align-items: center;
+}
+
+/* ---------- Tons de seção ---------- */
+
+/* Fundo vermelho (hero e contato). */
+.on-red {
+  background: var(--accent);
+  color: #fff;
+  --mute: #ffe9ea;
+  --rule: rgba(255, 255, 255, 0.4);
+}
+
+.on-red .btn {
+  background: #fff;
+  color: var(--accent-t);
+}
+
+.on-red .btn:hover {
+  background: var(--ink);
+  color: #fff;
+}
+
+.on-red .ulink:hover {
+  color: #fff;
+  text-decoration-thickness: 3px;
+}
+
+.on-red ::selection {
+  background: #fff;
+  color: var(--accent-t);
+}
+
+.on-red :focus-visible {
+  outline-color: #fff;
+}
+
+/* Fundo azul-escuro (projetos). */
+.sec--dark {
+  background: var(--ink);
+  color: var(--paper);
+  --mute: #a3b2d6;
+  --rule: #2d3f72;
+  --accent-t: #ff6b70;
+}
+
+.sec--dark .btn:hover {
+  background: #fff;
+  color: var(--ink);
+}
+
+.sec--dark .ulink:hover {
+  color: #fff;
+}
+
+/* Fundo claro (formação). */
+.sec--paper {
+  background: var(--paper);
+}
+
+/* ---------- Listas ---------- */
+
+/* Destaques: itens com filete vermelho no topo. */
+.hl {
+  list-style: none;
+  padding: 0;
+  display: grid;
+  gap: 1rem;
+}
+
+.hl li {
+  padding-top: 0.7rem;
+  border-top: 3px solid var(--accent);
+}
+
+.hl--wide {
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 17rem), 1fr));
+  gap: 1.5rem;
+}
+
+/* Linhas clicáveis separadas por filetes (projetos e contato). */
+.rows {
+  list-style: none;
+  padding: 0;
+}
+
+.rows a {
+  display: grid;
+  gap: 0.15rem;
+  padding: 1.1rem 0;
+  border-top: 1px solid var(--rule);
+  text-decoration: none;
+}
+
+.rows li:last-child a {
+  border-bottom: 1px solid var(--rule);
+}
+
+.rows a:hover strong {
+  color: var(--accent-t);
+}
+
+.rows strong {
+  font: 700 1.1rem var(--display);
+}
+
+.rows small {
+  color: var(--mute);
+  font-size: 0.88rem;
+}
+
+.rows + .ulink {
+  display: inline-block;
+  margin-top: 1.4rem;
+}
+
+/* Nota de rodapé de seção. */
+.note {
+  margin-top: 1.4rem;
+  color: var(--mute);
+  font-size: 0.95rem;
+}
+
+/* ---------- Decoração ---------- */
+
+/* Borda ondulada que liga uma seção à vizinha (ui/Edge.astro). */
+.edge {
+  position: absolute;
+  left: 0;
+  width: 100%;
+  height: clamp(18px, 3vw, 34px);
+  pointer-events: none;
+  z-index: 2;
+}
+
+.edge--top {
+  top: calc(1px - clamp(18px, 3vw, 34px));
+}
+
+.edge--bottom {
+  bottom: -1px;
+}
+
+.edge--ink {
+  fill: var(--ink);
+}
+
+.edge--red {
+  fill: var(--accent);
+}
+
+.edge--paper {
+  fill: var(--paper);
+}
+
+.edge--bg {
+  fill: var(--bg);
+}
+
+/* Traço grosso translúcido ao fundo das seções (ui/Swoosh.astro). */
+.swoosh {
+  position: absolute;
+  width: min(70%, 48rem);
+  height: auto;
+  pointer-events: none;
+  fill: none;
+  stroke-linecap: round;
+  stroke-width: 46;
+  overflow: visible;
+}
+
+.swoosh--a {
+  right: 2%;
+  top: 4%;
+  stroke: var(--accent);
+  opacity: 0.1;
+}
+
+.swoosh--b {
+  left: 2%;
+  bottom: 2%;
+  stroke: var(--ink);
+  opacity: 0.06;
+}

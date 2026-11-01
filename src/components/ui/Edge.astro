@@ -1,0 +1,15 @@
+---
+/**
+ * Borda ondulada que liga uma seção à vizinha.
+ * `tone` define a cor do preenchimento (ver .edge--* em styles/components.css).
+ */
+interface Props {
+  tone: 'ink' | 'red' | 'paper' | 'bg';
+  pos?: 'top' | 'bottom';
+}
+
+const { tone, pos = 'top' } = Astro.props;
+---
+<svg class={`edge edge--${tone} edge--${pos}`} viewBox="0 0 1440 40" preserveAspectRatio="none" aria-hidden="true">
+  <path d="M0 40V16C90 4 160 28 270 14S440 2 550 18 730 32 850 10 1060 6 1160 20 1340 26 1440 8V40Z" />
+</svg>

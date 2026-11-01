@@ -1,0 +1,150 @@
+---
+import Edge from '../ui/Edge.astro';
+import { t, type Lang } from '../../i18n';
+import { LINKS, PROFILE } from '../../data/site';
+
+interface Props {
+  lang: Lang;
+}
+
+const { lang } = Astro.props;
+const d = t(lang);
+const [firstName, lastName] = PROFILE.shortName.split(' ');
+---
+<section class="hero on-red" id="home">
+  <canvas class="paint" aria-hidden="true"></canvas>
+
+  <div class="wrap hero-main">
+    <h1><span>{firstName}</span>{' '}<span>{lastName}</span></h1>
+
+    <div class="hero-side">
+      <p class="status">{d.hero.status}</p>
+      <p class="lead">{d.hero.lead}</p>
+      <p class="acts">
+        <a class="btn" href="#projects">{d.hero.ctaProjects}</a>
+        <a class="ulink" href={LINKS.github} target="_blank" rel="noopener noreferrer">{d.hero.ctaGithub}</a>
+        {LINKS.linkedin && (
+          <a class="ulink" href={LINKS.linkedin} target="_blank" rel="noopener noreferrer">{d.contact.linkedinLabel}</a>
+        )}
+      </p>
+    </div>
+  </div>
+
+  <Edge tone="bg" pos="bottom" />
+</section>
+
+<script>
+  /**
+   * Rastro de tinta que segue o cursor sobre o hero.
+   * Sem interação por 1,8 s, um pincel automático continua desenhando.
+   * Desativado para quem prefere menos movimento.
+   */
+  const hero = document.getElementById('home') as HTMLElement;
+  const canvas = hero.querySelector<HTMLCanvasElement>('canvas.paint');
+  const prefersReducedMotion = matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  if (canvas && !prefersReducedMotion) {
+    const ctx = canvas.getContext('2d')!;
+    const COLORS = ['#0e1b3d', '#ff8a90', '#8f0f16'];
+    const COLOR_CHANGE_DISTANCE = 260; // px percorridos antes de trocar de cor
+    const IDLE_BEFORE_AUTO = 1800; // ms parado até o pincel automático entrar
+    const FADE_ALPHA = 0.028; // quanto o rastro some a cada quadro
+
+    let width = 0;
+    let height = 0;
+
+    const resize = () => {
+      const dpr = Math.min(devicePixelRatio || 1, 2);
+      width = hero.clientWidth;
+      height = hero.clientHeight;
+      canvas.width = width * dpr;
+      canvas.height = height * dpr;
+      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+      ctx.lineCap = 'round';
+      ctx.lineJoin = 'round';
+    };
+    resize();
+    addEventListener('resize', resize);
+
+    let prevX = 0;
+    let prevY = 0;
+    let hasPrev = false;
+    let colorIndex = 0;
+    let colorDistance = 0;
+
+    /** Desenha um segmento do ponto anterior até (x, y); traços rápidos ficam mais finos. */
+    const drawSegment = (x: number, y: number) => {
+      if (hasPrev) {
+        const step = Math.hypot(x - prevX, y - prevY);
+        colorDistance += step;
+        if (colorDistance > COLOR_CHANGE_DISTANCE) {
+          colorDistance = 0;
+          colorIndex = (colorIndex + 1) % COLORS.length;
+        }
+        ctx.strokeStyle = COLORS[colorIndex];
+        ctx.globalAlpha = 0.9;
+        ctx.lineWidth = Math.max(8, Math.min(46, 60 - step * 1.2));
+        ctx.beginPath();
+        ctx.moveTo(prevX, prevY);
+        ctx.lineTo(x, y);
+        ctx.stroke();
+      }
+      prevX = x;
+      prevY = y;
+      hasPrev = true;
+    };
+
+    let idle = 0;
+    let auto = false;
+    let autoTime = 0;
+
+    hero.addEventListener('pointermove', (event) => {
+      const rect = hero.getBoundingClientRect();
+      if (auto) {
+        auto = false;
+        hasPrev = false;
+      }
+      idle = 0;
+      drawSegment(event.clientX - rect.left, event.clientY - rect.top);
+    });
+    hero.addEventListener('pointerleave', () => {
+      hasPrev = false;
+    });
+
+    // Só anima enquanto o hero está visível.
+    let visible = true;
+    new IntersectionObserver(([entry]) => {
+      visible = entry.isIntersecting;
+    }).observe(hero);
+
+    let lastFrame = performance.now();
+    const loop = (now: number) => {
+      requestAnimationFrame(loop);
+      if (!visible) return;
+
+      const delta = now - lastFrame;
+      lastFrame = now;
+      idle += delta;
+
+      // Faz o rastro desaparecer aos poucos.
+      ctx.globalCompositeOperation = 'destination-out';
+      ctx.globalAlpha = FADE_ALPHA;
+      ctx.fillRect(0, 0, width, height);
+      ctx.globalCompositeOperation = 'source-over';
+
+      // Pincel automático quando o visitante não está mexendo o mouse.
+      if (idle > IDLE_BEFORE_AUTO) {
+        if (!auto) {
+          auto = true;
+          hasPrev = false;
+        }
+        autoTime += delta * 0.0006;
+        drawSegment(
+          width * (0.5 + 0.4 * Math.sin(autoTime * 1.7)),
+          height * (0.55 + 0.3 * Math.sin(autoTime * 2.3 + 1)),
+        );
+      }
+    };
+    requestAnimationFrame(loop);
+  }
+</script>

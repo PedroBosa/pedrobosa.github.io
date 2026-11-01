@@ -1,0 +1,54 @@
+---
+import Edge from '../ui/Edge.astro';
+import { t, type Lang } from '../../i18n';
+import { LINKS, STATS } from '../../data/site';
+
+interface Props {
+  lang: Lang;
+}
+
+const { lang } = Astro.props;
+const d = t(lang);
+const featured = d.projects.featured;
+const stats = d.projects.stats;
+---
+<section class="sec sec--dark" id="projects">
+  <Edge tone="ink" />
+
+  <div class="wrap">
+    <h2>{d.nav.projects}</h2>
+
+    <article class="feat">
+      <h3>{featured.name}</h3>
+      <p class="tag">{featured.tagline}</p>
+
+      <div class="feat-cols">
+        <p>{featured.description}</p>
+        <ul class="hl">
+          {featured.highlights.map((item) => <li>{item}</li>)}
+        </ul>
+      </div>
+
+      <p class="facts">{STATS.stars} {stats.stars}, {STATS.forks} {stats.forks}, {stats.license} {STATS.license}</p>
+
+      <p class="acts">
+        <a class="btn" href={LINKS.repo} target="_blank" rel="noopener noreferrer">{featured.ctaGithub}</a>
+        <a class="ulink" href={LINKS.release} target="_blank" rel="noopener noreferrer">{featured.ctaDownload}</a>
+      </p>
+    </article>
+
+    <h3 class="sub">{d.projects.othersTitle}</h3>
+    <ul class="rows">
+      {d.projects.others.map((project) => (
+        <li>
+          <a href={project.link} target="_blank" rel="noopener noreferrer">
+            <strong>{project.name}</strong>
+            <span>{project.description}</span>
+            <small>{project.tags.join(', ')}</small>
+          </a>
+        </li>
+      ))}
+    </ul>
+    <a class="ulink" href={LINKS.repos} target="_blank" rel="noopener noreferrer">{d.projects.viewAll}</a>
+  </div>
+</section>

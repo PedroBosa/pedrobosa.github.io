@@ -1,0 +1,52 @@
+---
+import { t, routes, altLang, type Lang } from '../../i18n';
+import { NAV_SECTIONS } from '../../data/nav';
+import { LINKS, PROFILE } from '../../data/site';
+
+interface Props {
+  lang: Lang;
+}
+
+const { lang } = Astro.props;
+const d = t(lang);
+const other = altLang(lang);
+---
+<header class="hdr" id="site-header">
+  <div class="hdr-in">
+    <a class="brand" href="#home">{PROFILE.shortName}</a>
+
+    <nav class="hdr-nav" aria-label={d.a11y.mainNav}>
+      {NAV_SECTIONS.map((id) => <a href={`#${id}`}>{d.nav[id]}</a>)}
+    </nav>
+
+    <div class="hdr-act">
+      <a class="sbtn" href="#projects">{d.header.preview}</a>
+      <a class="sbtn" href={LINKS.repo} target="_blank" rel="noopener noreferrer">{d.header.github}</a>
+      <a class="sbtn sbtn--fill" href={LINKS.release} target="_blank" rel="noopener noreferrer">{d.header.download}</a>
+    </div>
+
+    <a
+      class="lang"
+      href={routes[other]}
+      hreflang={other}
+      title={`${d.header.language}: ${d.header.other}`}
+      data-lang-toggle
+      data-target-lang={other}
+    >
+      {d.header.otherShort}<span class="sr-only"> {d.header.language}: {d.header.other}</span>
+    </a>
+  </div>
+</header>
+
+<script>
+  // Alterna o cabeçalho entre "barra no topo" e "pílula flutuante" ao rolar a página.
+  const header = document.getElementById('site-header');
+
+  if (header) {
+    const update = () => header.classList.toggle('is-scrolled', window.scrollY > 50);
+
+    window.addEventListener('scroll', update, { passive: true });
+    window.addEventListener('pageshow', update);
+    update();
+  }
+</script>

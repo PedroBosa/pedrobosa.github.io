@@ -1,0 +1,76 @@
+---
+import Edge from '../ui/Edge.astro';
+import { t, type Lang } from '../../i18n';
+import { LINKS, PROFILE } from '../../data/site';
+
+interface Props {
+  lang: Lang;
+}
+
+const { lang } = Astro.props;
+const d = t(lang);
+
+/** "https://www.linkedin.com/in/x" → "linkedin.com/in/x" */
+const readable = (url: string) => url.replace(/^https?:\/\/(www\.)?/, '').replace(/\/$/, '');
+
+// Canais sem valor em data/site.ts simplesmente não aparecem.
+const channels = [
+  { label: d.contact.githubLabel, value: PROFILE.githubUser, href: LINKS.github, external: true },
+  ...(LINKS.email
+    ? [{ label: d.contact.emailLabel, value: LINKS.email, href: `mailto:${LINKS.email}`, external: false }]
+    : []),
+  ...(LINKS.linkedin
+    ? [{ label: d.contact.linkedinLabel, value: readable(LINKS.linkedin), href: LINKS.linkedin, external: true }]
+    : []),
+];
+---
+<section class="sec on-red" id="contact">
+  <Edge tone="red" />
+
+  <div class="wrap">
+    <h2 class="giant">{d.contact.title}</h2>
+
+    <svg class="scribble" viewBox="0 0 900 48" aria-hidden="true">
+      <path pathLength="1" d="M6 24 C80 4 140 44 220 22 S360 40 440 16 S560 42 640 18 S780 36 894 12" />
+      <path class="ink" pathLength="1" d="M30 38 C130 22 230 46 340 32 S560 28 700 36 S830 30 880 38" />
+    </svg>
+
+    <div class="body">
+      <p class="big">{d.contact.lead}</p>
+
+      <ul class="rows links">
+        {channels.map((channel) => (
+          <li>
+            <a
+              href={channel.href}
+              target={channel.external ? '_blank' : undefined}
+              rel={channel.external ? 'noopener noreferrer' : undefined}
+            >
+              <span>{channel.label}</span>
+              <strong>{channel.value}</strong>
+            </a>
+          </li>
+        ))}
+      </ul>
+
+      <p class="note">{d.contact.availability}, {d.contact.location}</p>
+    </div>
+  </div>
+</section>
+
+<script>
+  // Desenha o rabisco uma única vez, quando ele entra na tela.
+  const scribble = document.querySelector('.scribble');
+
+  if (scribble) {
+    new IntersectionObserver(
+      ([entry], observer) => {
+        if (entry.isIntersecting) {
+          scribble.classList.add('is-in');
+          observer.disconnect();
+        }
+      },
+      { threshold: 0.6 },
+    ).observe(scribble);
+  }
+</script>

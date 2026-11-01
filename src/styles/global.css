@@ -1,0 +1,9 @@
+/*
+ * Ponto de entrada dos estilos (importado em layouts/Layout.astro).
+ * A ordem importa: arquivos posteriores podem refinar os anteriores.
+ */
+@import './tokens.css';
+@import './base.css';
+@import './components.css';
+@import './layout.css';
+@import './sections.css';

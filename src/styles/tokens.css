@@ -1,0 +1,19 @@
+/* Design tokens: cores, tipografia, espaçamento e movimento. */
+:root {
+  /* Cores */
+  --bg: #e6edf8;
+  --paper: #f7f9fd;
+  --ink: #0e1b3d;
+  --mute: #475677;
+  --rule: #bccae2;
+  --accent: #e0262d;
+  --accent-t: #b3141b; /* acento para texto sobre fundo claro (contraste AA) */
+
+  /* Tipografia */
+  --display: 'Archivo', system-ui, sans-serif;
+  --serif: 'Source Serif 4', Georgia, serif;
+
+  /* Espaçamento lateral e curva de animação */
+  --pad: clamp(1.25rem, 5vw, 3rem);
+  --ease: cubic-bezier(0.22, 1, 0.36, 1);
+}

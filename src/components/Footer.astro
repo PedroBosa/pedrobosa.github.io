@@ -1,0 +1,12 @@
+---
+import { t, type Lang } from '../i18n/ui';
+const { lang } = Astro.props as { lang: Lang };
+const d = t(lang);
+---
+<footer class="foot">
+  <div class="wrap">
+    <p>© {new Date().getFullYear()} {d.footer.rights}</p>
+    <p>{d.footer.builtWith}</p>
+    <a class="ulink" href="#home">{d.footer.top}</a>
+  </div>
+</footer>

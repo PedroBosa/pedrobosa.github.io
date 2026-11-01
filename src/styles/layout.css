@@ -1,0 +1,199 @@
+/* Estrutura global do site: cabeçalho flutuante e rodapé. */
+
+/* ---------- Cabeçalho ----------
+ * No topo da página é transparente e mostra só a marca e o idioma.
+ * Ao rolar (.is-scrolled, definido em layout/Header.astro) vira uma "pílula"
+ * flutuante com o menu e os botões de ação.
+ */
+
+.hdr {
+  position: fixed;
+  inset: 0 0 auto 0;
+  z-index: 100;
+  display: flex;
+  justify-content: center;
+  pointer-events: none;
+  transition: padding 0.45s var(--ease);
+}
+
+.hdr.is-scrolled {
+  padding: 12px 1rem 0;
+}
+
+.hdr-in {
+  display: flex;
+  align-items: center;
+  gap: 0.8rem;
+  width: 100%;
+  max-width: 1100px;
+  padding: 1.1rem var(--pad);
+  border: 1px solid transparent;
+  border-radius: 0;
+  color: #fff;
+  transition:
+    max-width 0.5s var(--ease),
+    padding 0.5s var(--ease),
+    border-radius 0.5s var(--ease),
+    background 0.3s,
+    border-color 0.3s,
+    box-shadow 0.3s,
+    color 0.3s;
+}
+
+.hdr.is-scrolled .hdr-in {
+  max-width: 980px;
+  padding: 0.45rem 0.5rem 0.45rem 1.2rem;
+  border-radius: 9999px;
+  color: var(--ink);
+  background: rgba(247, 249, 253, 0.66);
+  -webkit-backdrop-filter: blur(14px) saturate(170%);
+  backdrop-filter: blur(14px) saturate(170%);
+  border-color: rgba(14, 27, 61, 0.12);
+  box-shadow:
+    0 12px 28px -10px rgba(14, 27, 61, 0.32),
+    inset 0 1px 0 rgba(255, 255, 255, 0.6);
+}
+
+.hdr a {
+  pointer-events: auto;
+}
+
+.hdr:not(.is-scrolled) :focus-visible {
+  outline-color: #fff;
+}
+
+.brand {
+  font: 800 1.05rem var(--display);
+  font-stretch: 112%;
+  text-decoration: none;
+  margin-right: auto;
+  white-space: nowrap;
+}
+
+/* Menu e botões: recolhidos no topo, expandem ao rolar. */
+.hdr-nav,
+.hdr-act {
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+  max-width: 0;
+  opacity: 0;
+  overflow: hidden;
+  visibility: hidden;
+  transition:
+    max-width 0.5s var(--ease),
+    opacity 0.3s,
+    visibility 0s linear 0.4s;
+}
+
+.hdr.is-scrolled .hdr-nav {
+  max-width: 30rem;
+  opacity: 1;
+  visibility: visible;
+  transition:
+    max-width 0.5s var(--ease),
+    opacity 0.4s 0.08s,
+    visibility 0s;
+}
+
+.hdr.is-scrolled .hdr-act {
+  max-width: 26rem;
+  opacity: 1;
+  visibility: visible;
+  transition:
+    max-width 0.5s var(--ease),
+    opacity 0.4s 0.14s,
+    visibility 0s;
+}
+
+.hdr-nav a {
+  padding: 0.4rem 0.7rem;
+  border-radius: 9999px;
+  font: 500 0.9rem var(--display);
+  text-decoration: none;
+  white-space: nowrap;
+}
+
+.hdr-nav a:hover {
+  background: rgba(14, 27, 61, 0.07);
+}
+
+/* Botões pequenos da pílula. */
+.sbtn {
+  padding: 0.5rem 0.95rem;
+  border-radius: 9999px;
+  font: 600 0.85rem var(--display);
+  text-decoration: none;
+  white-space: nowrap;
+  border: 1px solid rgba(14, 27, 61, 0.2);
+}
+
+.sbtn:hover {
+  background: rgba(14, 27, 61, 0.07);
+}
+
+.sbtn--fill {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: #fff;
+}
+
+.sbtn--fill:hover {
+  background: var(--ink);
+  border-color: var(--ink);
+}
+
+/* Seletor de idioma (PT/EN). */
+.lang {
+  padding: 0.4rem 0.75rem;
+  border: 1px solid currentColor;
+  border-radius: 9999px;
+  font: 600 0.8rem var(--display);
+  text-decoration: none;
+  opacity: 0.85;
+}
+
+.lang:hover {
+  opacity: 1;
+}
+
+@media (max-width: 940px) {
+  .hdr-nav {
+    display: none;
+  }
+}
+
+@media (max-width: 620px) {
+  .hdr-act .sbtn:not(.sbtn--fill) {
+    display: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hdr,
+  .hdr-in,
+  .hdr-nav,
+  .hdr-act {
+    transition: none;
+  }
+}
+
+/* ---------- Rodapé ---------- */
+
+.foot {
+  background: var(--ink);
+  padding-block: 1.5rem;
+  font-size: 0.9rem;
+  color: #a3b2d6;
+}
+
+.foot .wrap {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem 2rem;
+  justify-content: space-between;
+}
+
+.foot .ulink {
+  color: #fff;
+}

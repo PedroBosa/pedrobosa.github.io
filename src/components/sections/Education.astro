@@ -1,0 +1,36 @@
+---
+import Edge from '../ui/Edge.astro';
+import { t, type Lang } from '../../i18n';
+
+interface Props {
+  lang: Lang;
+}
+
+const { lang } = Astro.props;
+const d = t(lang);
+const education = d.education;
+---
+<section class="sec sec--paper" id="education">
+  <Edge tone="paper" />
+
+  <div class="wrap">
+    <h2>{d.nav.education}</h2>
+
+    <ol class="tl">
+      {education.timeline.map((item) => (
+        <li class:list={{ now: item.current }}>
+          <span class="when">{item.period}</span>
+          <div>
+            <h3>{item.title}</h3>
+            <p>{item.org}, {item.detail}{item.current ? `, ${education.currentLabel.toLowerCase()}` : ''}</p>
+          </div>
+        </li>
+      ))}
+    </ol>
+
+    <h3 class="sub">{education.awardsTitle}</h3>
+    <ul class="hl hl--wide">
+      {education.awards.map((award) => <li>{award.title} ({award.detail})</li>)}
+    </ul>
+  </div>
+</section>
