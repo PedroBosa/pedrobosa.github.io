@@ -167,6 +167,7 @@ export const pt = {
   },
 
   stack: {
+    lead: 'Tecnologias e ferramentas que uso e estudo, organizadas por área.',
     groups: [
       { title: 'Linguagens', items: ['C', 'C++', 'C#', 'Java', 'Python', 'JavaScript', 'TypeScript', 'PHP'] },
       { title: 'Desktop & .NET', items: ['.NET', 'WPF', 'XAML'] },

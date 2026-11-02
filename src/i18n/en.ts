@@ -169,6 +169,7 @@ export const en: Dictionary = {
   },
 
   stack: {
+    lead: 'Technologies and tools I use and study, organised by area.',
     groups: [
       { title: 'Languages', items: ['C', 'C++', 'C#', 'Java', 'Python', 'JavaScript', 'TypeScript', 'PHP'] },
       { title: 'Desktop & .NET', items: ['.NET', 'WPF', 'XAML'] },
