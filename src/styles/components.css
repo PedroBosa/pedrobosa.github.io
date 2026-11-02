@@ -221,13 +221,13 @@
 .mesh-rows line {
   stroke: var(--ink);
   stroke-width: 1;
-  opacity: 0.045;
+  opacity: 0.03;
 }
 
 .mesh-columns line {
   stroke: var(--c);
   stroke-width: 1;
-  opacity: 0.12;
+  opacity: 0.065;
   animation: mesh-wave 9s ease-in-out infinite;
   animation-delay: calc(var(--i) * -0.45s);
 }
@@ -235,10 +235,10 @@
 @keyframes mesh-wave {
   0%,
   100% {
-    opacity: 0.12;
+    opacity: 0.065;
   }
   50% {
-    opacity: 0.34;
+    opacity: 0.18;
   }
 }
 
@@ -246,7 +246,7 @@
 @media (prefers-reduced-motion: reduce) {
   .mesh-columns line {
     animation: none;
-    opacity: 0.2;
+    opacity: 0.11;
   }
 }
 
