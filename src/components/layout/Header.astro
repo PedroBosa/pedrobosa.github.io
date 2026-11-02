@@ -12,17 +12,26 @@ const d = t(lang);
 const other = altLang(lang);
 const home = routes[lang];
 ---
+
 <header class="hdr" id="site-header">
   <div class="hdr-in">
-    <a class="brand" href={`${home}#home`}>{PROFILE.shortName}</a>
+    <a class="brand" href={`${home}#home`}>
+      {PROFILE.shortName}
+    </a>
 
     <nav class="hdr-nav" id="site-nav" aria-label={d.a11y.mainNav} data-menu>
-      {NAV_SECTIONS.map((id) => <a href={`${home}#${id}`}>{d.nav[id]}</a>)}
-      <a class="hdr-nav__cta" href={LINKS.github} target="_blank" rel="noopener noreferrer">{d.header.github}</a>
+      {NAV_SECTIONS.map((id) => (
+        <a href={`${home}#${id}`}>{d.nav[id]}</a>
+      ))}
+      <a class="hdr-nav__cta" href={LINKS.github} target="_blank" rel="noopener noreferrer">
+        {d.header.github}
+      </a>
     </nav>
 
     <div class="hdr-act">
-      <a class="sbtn sbtn--fill" href={LINKS.github} target="_blank" rel="noopener noreferrer">{d.header.github}</a>
+      <a class="sbtn sbtn--fill" href={LINKS.github} target="_blank" rel="noopener noreferrer">
+        {d.header.github}
+      </a>
     </div>
 
     <a
@@ -33,7 +42,11 @@ const home = routes[lang];
       data-lang-toggle
       data-target-lang={other}
     >
-      {d.header.otherShort}<span class="sr-only"> {d.header.language}: {d.header.other}</span>
+      {d.header.otherShort}
+      <span class="sr-only">
+        {' '}
+        {d.header.language}: {d.header.other}
+      </span>
     </a>
 
     <button
@@ -46,7 +59,11 @@ const home = routes[lang];
       data-label-open={d.a11y.openMenu}
       data-label-close={d.a11y.closeMenu}
     >
-      <span class="menu-btn__bars" aria-hidden="true"><span></span><span></span><span></span></span>
+      <span class="menu-btn__bars" aria-hidden="true">
+        <span></span>
+        <span></span>
+        <span></span>
+      </span>
       <span class="menu-btn__text">{d.header.menu}</span>
     </button>
   </div>

@@ -119,13 +119,22 @@ export const pt = {
   stack: {
     lead: 'Tecnologias e ferramentas que uso e estudo, organizadas por área.',
     groups: [
-      { title: 'Linguagens', items: ['C', 'C++', 'C#', 'Java', 'Python', 'JavaScript', 'TypeScript', 'PHP'] },
+      {
+        title: 'Linguagens',
+        items: ['C', 'C++', 'C#', 'Java', 'Python', 'JavaScript', 'TypeScript', 'PHP'],
+      },
       { title: 'Desktop & .NET', items: ['.NET', 'WPF', 'XAML'] },
       { title: 'Web', items: ['HTML', 'CSS', 'Astro'] },
       { title: 'Dados', items: ['SQL', 'Modelagem de dados'] },
       { title: 'IoT & Sistemas', items: ['ESP32', 'PlatformIO'] },
-      { title: 'Ferramentas', items: ['Git', 'GitHub Actions', 'CI/CD', 'FFmpeg', 'Pandoc', 'LibreOffice'] },
-      { title: 'Design & Mídia', items: ['Photoshop', 'Illustrator', 'Vetorização', 'Edição de imagens'] },
+      {
+        title: 'Ferramentas',
+        items: ['Git', 'GitHub Actions', 'CI/CD', 'FFmpeg', 'Pandoc', 'LibreOffice'],
+      },
+      {
+        title: 'Design & Mídia',
+        items: ['Photoshop', 'Illustrator', 'Vetorização', 'Edição de imagens'],
+      },
       { title: 'Produtividade', items: ['Pacote Office'] },
     ],
     note: 'Aprendendo e praticando continuamente — esta lista cresce junto com os projetos.',

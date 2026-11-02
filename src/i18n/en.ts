@@ -109,8 +109,7 @@ export const en: Dictionary = {
       },
       {
         name: 'chrispincelmagico',
-        description:
-          'A JavaScript experiment: a brush for drawing freely right in the browser.',
+        description: 'A JavaScript experiment: a brush for drawing freely right in the browser.',
         tags: ['JavaScript', 'Web'],
         link: 'https://github.com/PedroBosa/chrispincelmagico',
       },
@@ -121,13 +120,22 @@ export const en: Dictionary = {
   stack: {
     lead: 'Technologies and tools I use and study, organised by area.',
     groups: [
-      { title: 'Languages', items: ['C', 'C++', 'C#', 'Java', 'Python', 'JavaScript', 'TypeScript', 'PHP'] },
+      {
+        title: 'Languages',
+        items: ['C', 'C++', 'C#', 'Java', 'Python', 'JavaScript', 'TypeScript', 'PHP'],
+      },
       { title: 'Desktop & .NET', items: ['.NET', 'WPF', 'XAML'] },
       { title: 'Web', items: ['HTML', 'CSS', 'Astro'] },
       { title: 'Data', items: ['SQL', 'Data modelling'] },
       { title: 'IoT & Systems', items: ['ESP32', 'PlatformIO'] },
-      { title: 'Tooling', items: ['Git', 'GitHub Actions', 'CI/CD', 'FFmpeg', 'Pandoc', 'LibreOffice'] },
-      { title: 'Design & Media', items: ['Photoshop', 'Illustrator', 'Vectorization', 'Image editing'] },
+      {
+        title: 'Tooling',
+        items: ['Git', 'GitHub Actions', 'CI/CD', 'FFmpeg', 'Pandoc', 'LibreOffice'],
+      },
+      {
+        title: 'Design & Media',
+        items: ['Photoshop', 'Illustrator', 'Vectorization', 'Image editing'],
+      },
       { title: 'Productivity', items: ['Office suite'] },
     ],
     note: 'Learning and practising continuously — this list grows along with the projects.',

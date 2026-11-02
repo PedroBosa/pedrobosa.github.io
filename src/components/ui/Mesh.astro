@@ -21,11 +21,20 @@ const columns = Array.from({ length: COLUMNS + 1 }, (_, i) => ({
   index: i,
 }));
 
-const rows = Array.from({ length: ROWS + 1 }, (_, i) => 900 / ROWS * i);
+const rows = Array.from({ length: ROWS + 1 }, (_, i) => (900 / ROWS) * i);
 ---
-<svg class="mesh" viewBox="0 0 1440 900" preserveAspectRatio="none" aria-hidden="true" focusable="false">
+
+<svg
+  class="mesh"
+  viewBox="0 0 1440 900"
+  preserveAspectRatio="none"
+  aria-hidden="true"
+  focusable="false"
+>
   <g class="mesh-rows">
-    {rows.map((y) => <line x1="0" y1={y} x2="1440" y2={y} vector-effect="non-scaling-stroke" />)}
+    {rows.map((y) => (
+      <line x1="0" y1={y} x2="1440" y2={y} vector-effect="non-scaling-stroke" />
+    ))}
   </g>
 
   <g class="mesh-columns">

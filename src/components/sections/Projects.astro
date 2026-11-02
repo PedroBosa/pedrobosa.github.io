@@ -20,6 +20,7 @@ const demo = {
   webm: '/projects/radialflow-demo.webm',
 };
 ---
+
 <section class="sec sec--dark" id="projects">
   <Edge tone="ink" />
 
@@ -33,7 +34,9 @@ const demo = {
       <p class="tag">{featured.tagline}</p>
 
       <ul class="tags" aria-label={d.projects.tagsLabel}>
-        {featured.tags.map((tag) => <li>{tag}</li>)}
+        {featured.tags.map((tag) => (
+          <li>{tag}</li>
+        ))}
       </ul>
 
       <figure class="feat-media" data-demo>
@@ -68,7 +71,9 @@ const demo = {
       <div class="feat-cols">
         <p class="prose">{featured.description}</p>
         <ul class="hl">
-          {featured.highlights.map((item) => <li>{item}</li>)}
+          {featured.highlights.map((item) => (
+            <li>{item}</li>
+          ))}
         </ul>
       </div>
 
@@ -82,12 +87,17 @@ const demo = {
       </div>
 
       <p class="facts">
-        {repoStats.stars} {stats.stars}, {repoStats.forks} {stats.forks}, {stats.license} {repoStats.license}, {stats.version} {repoStats.version}
+        {repoStats.stars} {stats.stars}, {repoStats.forks} {stats.forks}, {stats.license}{' '}
+        {repoStats.license}, {stats.version} {repoStats.version}
       </p>
 
       <p class="acts">
-        <a class="btn" href={LINKS.repo} target="_blank" rel="noopener noreferrer">{featured.ctaGithub}</a>
-        <a class="ulink" href={LINKS.release} target="_blank" rel="noopener noreferrer">{featured.ctaDownload}</a>
+        <a class="btn" href={LINKS.repo} target="_blank" rel="noopener noreferrer">
+          {featured.ctaGithub}
+        </a>
+        <a class="ulink" href={LINKS.release} target="_blank" rel="noopener noreferrer">
+          {featured.ctaDownload}
+        </a>
       </p>
     </article>
 
@@ -103,7 +113,9 @@ const demo = {
         </li>
       ))}
     </ul>
-    <a class="ulink" href={LINKS.repos} target="_blank" rel="noopener noreferrer">{d.projects.viewAll}</a>
+    <a class="ulink" href={LINKS.repos} target="_blank" rel="noopener noreferrer">
+      {d.projects.viewAll}
+    </a>
   </div>
 </section>
 

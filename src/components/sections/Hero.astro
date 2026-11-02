@@ -11,23 +11,38 @@ const { lang } = Astro.props;
 const d = t(lang);
 const [firstName, lastName] = PROFILE.shortName.split(' ');
 ---
+
 <section class="hero on-red" id="home">
   <canvas class="paint" aria-hidden="true"></canvas>
 
   <div class="wrap hero-main">
-    <h1><span>{firstName}</span>{' '}<span>{lastName}</span></h1>
+    <h1>
+      <span>{firstName}</span> <span>{lastName}</span>
+    </h1>
 
     <div class="hero-side">
       <p class="eyebrow">{d.hero.eyebrow}</p>
-      <p class="status">{d.hero.role} · {d.hero.status}</p>
+      <p class="status">
+        {d.hero.role} · {d.hero.status}
+      </p>
       <p class="lead">{d.hero.lead}</p>
       <p class="acts">
-        <a class="btn" href="#projects">{d.hero.ctaProjects}</a>
-        <a class="btn btn--ghost" href={LINKS.cv[lang]} download>{d.hero.ctaCv}</a>
-        <a class="ulink" href={`mailto:${LINKS.email}`}>{d.hero.ctaEmail}</a>
-        <a class="ulink" href={LINKS.github} target="_blank" rel="noopener noreferrer">{d.hero.ctaGithub}</a>
+        <a class="btn" href="#projects">
+          {d.hero.ctaProjects}
+        </a>
+        <a class="btn btn--ghost" href={LINKS.cv[lang]} download>
+          {d.hero.ctaCv}
+        </a>
+        <a class="ulink" href={`mailto:${LINKS.email}`}>
+          {d.hero.ctaEmail}
+        </a>
+        <a class="ulink" href={LINKS.github} target="_blank" rel="noopener noreferrer">
+          {d.hero.ctaGithub}
+        </a>
         {LINKS.linkedin && (
-          <a class="ulink" href={LINKS.linkedin} target="_blank" rel="noopener noreferrer">{d.contact.linkedinLabel}</a>
+          <a class="ulink" href={LINKS.linkedin} target="_blank" rel="noopener noreferrer">
+            {d.contact.linkedinLabel}
+          </a>
         )}
       </p>
     </div>
@@ -96,8 +111,7 @@ const [firstName, lastName] = PROFILE.shortName.split(' ');
       let speed = 0;
       let scheduled = false;
 
-      const baseWidthAt = (minDim: number) =>
-        clamp(minDim * BASE_RATIO, BASE_MIN, BASE_MAX);
+      const baseWidthAt = (minDim: number) => clamp(minDim * BASE_RATIO, BASE_MIN, BASE_MAX);
 
       /**
        * Normalizado → pixels, com um leve alisamento do tremor do mouse.
@@ -237,10 +251,7 @@ const [firstName, lastName] = PROFILE.shortName.split(' ');
         const point = pointAt(event);
         const last = live[live.length - 1];
         const minDim = Math.min(width, height);
-        const distance = Math.hypot(
-          (point.x - last.x) * width,
-          (point.y - last.y) * height,
-        );
+        const distance = Math.hypot((point.x - last.x) * width, (point.y - last.y) * height);
 
         if (distance < MIN_STEP) return;
 

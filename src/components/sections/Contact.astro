@@ -17,17 +17,39 @@ const readable = (url: string) => url.replace(/^https?:\/\/(www\.)?/, '').replac
 // E-mail primeiro: é o canal de menor atrito para uma proposta de estágio.
 const channels = [
   ...(LINKS.email
-    ? [{ label: d.contact.emailLabel, value: LINKS.email, href: `mailto:${LINKS.email}`, external: false }]
+    ? [
+        {
+          label: d.contact.emailLabel,
+          value: LINKS.email,
+          href: `mailto:${LINKS.email}`,
+          external: false,
+        },
+      ]
     : []),
   ...(LINKS.linkedin
-    ? [{ label: d.contact.linkedinLabel, value: readable(LINKS.linkedin), href: LINKS.linkedin, external: true }]
+    ? [
+        {
+          label: d.contact.linkedinLabel,
+          value: readable(LINKS.linkedin),
+          href: LINKS.linkedin,
+          external: true,
+        },
+      ]
     : []),
   ...(LINKS.instagram
-    ? [{ label: d.contact.instagramLabel, value: readable(LINKS.instagram), href: LINKS.instagram, external: true }]
+    ? [
+        {
+          label: d.contact.instagramLabel,
+          value: readable(LINKS.instagram),
+          href: LINKS.instagram,
+          external: true,
+        },
+      ]
     : []),
   { label: d.contact.githubLabel, value: PROFILE.githubUser, href: LINKS.github, external: true },
 ];
 ---
+
 <section class="sec on-red" id="contact">
   <Edge tone="red" />
 
@@ -35,16 +57,27 @@ const channels = [
     <h2 class="giant">{d.contact.title}</h2>
 
     <svg class="scribble" viewBox="0 0 900 48" aria-hidden="true">
-      <path pathLength="1" d="M6 24 C80 4 140 44 220 22 S360 40 440 16 S560 42 640 18 S780 36 894 12" />
-      <path class="ink" pathLength="1" d="M30 38 C130 22 230 46 340 32 S560 28 700 36 S830 30 880 38" />
+      <path
+        pathLength="1"
+        d="M6 24 C80 4 140 44 220 22 S360 40 440 16 S560 42 640 18 S780 36 894 12"
+      />
+      <path
+        class="ink"
+        pathLength="1"
+        d="M30 38 C130 22 230 46 340 32 S560 28 700 36 S830 30 880 38"
+      />
     </svg>
 
     <div class="body">
       <div class="contact-lead">
         <p class="big">{d.contact.lead}</p>
         <p class="acts contact-acts">
-          <a class="btn" href={`mailto:${LINKS.email}`}>{d.contact.ctaEmail}</a>
-          <a class="ulink" href={LINKS.cv[lang]} download>{d.contact.ctaCv}</a>
+          <a class="btn" href={`mailto:${LINKS.email}`}>
+            {d.contact.ctaEmail}
+          </a>
+          <a class="ulink" href={LINKS.cv[lang]} download>
+            {d.contact.ctaCv}
+          </a>
         </p>
       </div>
 
@@ -63,7 +96,9 @@ const channels = [
         ))}
       </ul>
 
-      <p class="note">{d.contact.availability}, {d.contact.location}</p>
+      <p class="note">
+        {d.contact.availability}, {d.contact.location}
+      </p>
     </div>
   </div>
 </section>

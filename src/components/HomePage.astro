@@ -20,6 +20,7 @@ interface Props {
 const { lang } = Astro.props;
 const repoStats = await getRepoStats();
 ---
+
 <Layout lang={lang}>
   <Hero lang={lang} />
   <About lang={lang} repoStats={repoStats} />

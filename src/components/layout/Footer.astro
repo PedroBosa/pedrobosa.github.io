@@ -10,10 +10,15 @@ const { lang } = Astro.props;
 const d = t(lang);
 const home = routes[lang];
 ---
+
 <footer class="foot">
   <div class="wrap">
-    <p>© {new Date().getFullYear()} {PROFILE.fullName}</p>
+    <p>
+      © {new Date().getFullYear()} {PROFILE.fullName}
+    </p>
     <p>{d.footer.builtWith}</p>
-    <a class="ulink" href={`${home}#home`}>{d.footer.top}</a>
+    <a class="ulink" href={`${home}#home`}>
+      {d.footer.top}
+    </a>
   </div>
 </footer>

@@ -50,6 +50,7 @@ const personLd = {
   knowsAbout: ['C#', '.NET', 'WPF', 'Astro', 'SQL', 'IoT'],
 };
 ---
+
 <!doctype html>
 <html lang={d.meta.lang} data-lang={lang}>
   <head>
@@ -89,10 +90,15 @@ const personLd = {
     <meta name="twitter:image:alt" content={`${PROFILE.shortName} — ${d.meta.jobTitle}`} />
 
     <link rel="preload" href="/fonts/archivo-latin.woff2" as="font" type="font/woff2" crossorigin />
-    <link rel="preload" href="/fonts/source-serif-4-latin.woff2" as="font" type="font/woff2" crossorigin />
+    <link
+      rel="preload"
+      href="/fonts/source-serif-4-latin.woff2"
+      as="font"
+      type="font/woff2"
+      crossorigin
+    />
 
     <script type="application/ld+json" set:html={JSON.stringify(personLd)} />
-
     <!--
       Visitante recorrente: se ele escolheu um idioma antes, abre direto nele.
       O redirecionamento só acontece na raiz; um acesso explícito a /en/ é sempre respeitado.
@@ -100,18 +106,18 @@ const personLd = {
     <script is:inline define:vars={{ routes }}>
       (function () {
         try {
-          var current = document.documentElement.getAttribute('data-lang');
-          var preferred = localStorage.getItem('pb:lang');
-          var locked = sessionStorage.getItem('pb:lang-lock');
-          var known = preferred && Object.prototype.hasOwnProperty.call(routes, preferred);
-          var target = known ? routes[preferred] : null;
-          var root = routes.pt;
-          var isRoot = location.pathname === root || location.pathname === root + 'index.html';
+          const current = document.documentElement.getAttribute('data-lang');
+          const preferred = localStorage.getItem('pb:lang');
+          const locked = sessionStorage.getItem('pb:lang-lock');
+          const known = preferred && Object.prototype.hasOwnProperty.call(routes, preferred);
+          const target = known ? routes[preferred] : null;
+          const root = routes.pt;
+          const isRoot = location.pathname === root || location.pathname === root + 'index.html';
 
           if (!locked && isRoot && target && preferred !== current) {
             location.replace(target);
           }
-        } catch (e) {
+        } catch {
           /* armazenamento indisponível: segue no idioma atual */
         }
       })();
@@ -119,7 +125,9 @@ const personLd = {
   </head>
 
   <body>
-    <a class="skip-link" href="#main">{d.a11y.skip}</a>
+    <a class="skip-link" href="#main">
+      {d.a11y.skip}
+    </a>
 
     <Header lang={lang} />
 
@@ -139,7 +147,7 @@ const personLd = {
           try {
             localStorage.setItem('pb:lang', target);
             sessionStorage.setItem('pb:lang-lock', '1');
-          } catch (e) {
+          } catch {
             /* armazenamento indisponível: a troca de idioma ainda funciona */
           }
         });

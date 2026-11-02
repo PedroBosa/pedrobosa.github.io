@@ -9,6 +9,7 @@ interface Props {
 const { lang } = Astro.props;
 const d = t(lang);
 ---
+
 <section class="sec" id="stack">
   <Edge tone="bg" />
 
@@ -22,7 +23,9 @@ const d = t(lang);
           <dt>{group.title}</dt>
           <dd>
             <ul class="words">
-              {group.items.map((item) => <li>{item}</li>)}
+              {group.items.map((item) => (
+                <li>{item}</li>
+              ))}
             </ul>
           </dd>
         </div>

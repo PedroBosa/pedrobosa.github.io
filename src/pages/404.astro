@@ -2,6 +2,7 @@
 import Layout from '../layouts/Layout.astro';
 import { LINKS } from '../data/site';
 ---
+
 <Layout
   lang="pt"
   noindex
@@ -13,15 +14,25 @@ import { LINKS } from '../data/site';
       <p class="eyebrow">404</p>
       <h1>Página não encontrada</h1>
       <p class="big">O endereço que você abriu não existe ou mudou de lugar.</p>
-      <p class="big" lang="en">The page you requested could not be found.</p>
+      <p class="big" lang="en">
+        The page you requested could not be found.
+      </p>
 
       <p class="acts">
-        <a class="btn" href="/">Ir para o início</a>
-        <a class="ulink" href="/en/">Go to the English version</a>
+        <a class="btn" href="/">
+          Ir para o início
+        </a>
+        <a class="ulink" href="/en/">
+          Go to the English version
+        </a>
       </p>
 
       <p class="note">
-        Se você acha que isso é um erro, <a class="ulink" href={`mailto:${LINKS.email}`}>me avise por e-mail</a>.
+        Se você acha que isso é um erro,{' '}
+        <a class="ulink" href={`mailto:${LINKS.email}`}>
+          me avise por e-mail
+        </a>
+        .
       </p>
     </div>
   </section>

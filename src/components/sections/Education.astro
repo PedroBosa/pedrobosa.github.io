@@ -10,6 +10,7 @@ const { lang } = Astro.props;
 const d = t(lang);
 const education = d.education;
 ---
+
 <section class="sec sec--paper" id="education">
   <Edge tone="paper" />
 
@@ -22,7 +23,10 @@ const education = d.education;
           <span class="when">{item.period}</span>
           <div>
             <h3>{item.title}</h3>
-            <p>{item.org}, {item.detail}{item.current ? `, ${education.currentLabel.toLowerCase()}` : ''}</p>
+            <p>
+              {item.org}, {item.detail}
+              {item.current ? `, ${education.currentLabel.toLowerCase()}` : ''}
+            </p>
           </div>
         </li>
       ))}
@@ -33,14 +37,20 @@ const education = d.education;
       {education.complementary.map((item) => (
         <li>
           <span class="comp-title">{item.title}</span>
-          <span class="comp-meta">{item.org} · {item.detail} · {item.period}</span>
+          <span class="comp-meta">
+            {item.org} · {item.detail} · {item.period}
+          </span>
         </li>
       ))}
     </ul>
 
     <h3 class="sub">{education.awardsTitle}</h3>
     <ul class="hl hl--wide">
-      {education.awards.map((award) => <li>{award.title} ({award.detail})</li>)}
+      {education.awards.map((award) => (
+        <li>
+          {award.title} ({award.detail})
+        </li>
+      ))}
     </ul>
   </div>
 </section>
