@@ -1,5 +1,5 @@
 ---
-import Swoosh from '../ui/Swoosh.astro';
+import Vinyl from '../ui/Vinyl.astro';
 import { t, type Lang } from '../../i18n';
 
 interface Props {
@@ -10,7 +10,7 @@ const { lang } = Astro.props;
 const d = t(lang);
 ---
 <section class="sec" id="about">
-  <Swoosh variant="a" />
+  <Vinyl />
 
   <div class="wrap">
     <h2>{d.nav.about}</h2>

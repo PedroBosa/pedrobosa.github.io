@@ -123,7 +123,7 @@
 
 #about,
 #stack {
-  overflow: hidden; /* contém o swoosh decorativo */
+  overflow: hidden; /* contém os detalhes de fundo (vinil, swoosh) */
 }
 
 .about {
