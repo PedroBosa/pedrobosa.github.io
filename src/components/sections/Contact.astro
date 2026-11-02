@@ -14,14 +14,15 @@ const d = t(lang);
 const readable = (url: string) => url.replace(/^https?:\/\/(www\.)?/, '').replace(/\/$/, '');
 
 // Canais sem valor em data/site.ts simplesmente não aparecem.
+// E-mail primeiro: é o canal de menor atrito para uma proposta de estágio.
 const channels = [
-  { label: d.contact.githubLabel, value: PROFILE.githubUser, href: LINKS.github, external: true },
   ...(LINKS.email
     ? [{ label: d.contact.emailLabel, value: LINKS.email, href: `mailto:${LINKS.email}`, external: false }]
     : []),
   ...(LINKS.linkedin
     ? [{ label: d.contact.linkedinLabel, value: readable(LINKS.linkedin), href: LINKS.linkedin, external: true }]
     : []),
+  { label: d.contact.githubLabel, value: PROFILE.githubUser, href: LINKS.github, external: true },
 ];
 ---
 <section class="sec on-red" id="contact">
@@ -36,7 +37,13 @@ const channels = [
     </svg>
 
     <div class="body">
-      <p class="big">{d.contact.lead}</p>
+      <div class="contact-lead">
+        <p class="big">{d.contact.lead}</p>
+        <p class="acts contact-acts">
+          <a class="btn" href={`mailto:${LINKS.email}`}>{d.contact.ctaEmail}</a>
+          <a class="ulink" href={LINKS.cv[lang]} download>{d.contact.ctaCv}</a>
+        </p>
+      </div>
 
       <ul class="rows links">
         {channels.map((channel) => (

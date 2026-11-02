@@ -36,6 +36,8 @@ jobs:
 
       - name: Build do Astro
         run: npm run build
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Configurar o Pages
         uses: actions/configure-pages@v5

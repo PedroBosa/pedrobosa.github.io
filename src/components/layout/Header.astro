@@ -10,19 +10,23 @@ interface Props {
 const { lang } = Astro.props;
 const d = t(lang);
 const other = altLang(lang);
+const home = routes[lang];
+const cvUrl = LINKS.cv[lang];
 ---
 <header class="hdr" id="site-header">
   <div class="hdr-in">
-    <a class="brand" href="#home">{PROFILE.shortName}</a>
+    <a class="brand" href={`${home}#home`}>{PROFILE.shortName}</a>
 
-    <nav class="hdr-nav" aria-label={d.a11y.mainNav}>
-      {NAV_SECTIONS.map((id) => <a href={`#${id}`}>{d.nav[id]}</a>)}
+    <nav class="hdr-nav" id="site-nav" aria-label={d.a11y.mainNav} data-menu>
+      {NAV_SECTIONS.map((id) => <a href={`${home}#${id}`}>{d.nav[id]}</a>)}
+      <a class="hdr-nav__cv" href={cvUrl} download>{d.header.cv}</a>
     </nav>
 
     <div class="hdr-act">
-      <a class="sbtn" href="#projects">{d.header.preview}</a>
+      <a class="sbtn" href={`${home}#projects`}>{d.header.preview}</a>
       <a class="sbtn" href={LINKS.repo} target="_blank" rel="noopener noreferrer">{d.header.github}</a>
-      <a class="sbtn sbtn--fill" href={LINKS.release} target="_blank" rel="noopener noreferrer">{d.header.download}</a>
+      <a class="sbtn" href={LINKS.release} target="_blank" rel="noopener noreferrer">{d.header.download}</a>
+      <a class="sbtn sbtn--fill" href={cvUrl} download>{d.header.cv}</a>
     </div>
 
     <a
@@ -35,18 +39,75 @@ const other = altLang(lang);
     >
       {d.header.otherShort}<span class="sr-only"> {d.header.language}: {d.header.other}</span>
     </a>
+
+    <button
+      class="menu-btn"
+      type="button"
+      aria-expanded="false"
+      aria-controls="site-nav"
+      aria-label={d.a11y.openMenu}
+      data-menu-toggle
+      data-label-open={d.a11y.openMenu}
+      data-label-close={d.a11y.closeMenu}
+    >
+      <span class="menu-btn__bars" aria-hidden="true"><span></span><span></span><span></span></span>
+      <span class="menu-btn__text">{d.header.menu}</span>
+    </button>
   </div>
 </header>
 
 <script>
-  // Alterna o cabeçalho entre "barra no topo" e "pílula flutuante" ao rolar a página.
   const header = document.getElementById('site-header');
 
   if (header) {
-    const update = () => header.classList.toggle('is-scrolled', window.scrollY > 50);
+    const toggle = header.querySelector<HTMLButtonElement>('[data-menu-toggle]');
+    const nav = header.querySelector<HTMLElement>('[data-menu]');
+    const desktop = matchMedia('(min-width: 941px)');
 
-    window.addEventListener('scroll', update, { passive: true });
-    window.addEventListener('pageshow', update);
-    update();
+    // Alterna o cabeçalho entre "barra no topo" e "pílula flutuante" ao rolar a página.
+    const updateHeader = () => header.classList.toggle('is-scrolled', window.scrollY > 50);
+    window.addEventListener('scroll', updateHeader, { passive: true });
+    window.addEventListener('pageshow', updateHeader);
+    updateHeader();
+
+    if (toggle && nav) {
+      const openLabel = toggle.dataset.labelOpen ?? 'Menu';
+      const closeLabel = toggle.dataset.labelClose ?? 'Fechar menu';
+
+      const setMenu = (open: boolean, returnFocus = false) => {
+        toggle.setAttribute('aria-expanded', String(open));
+        toggle.setAttribute('aria-label', open ? closeLabel : openLabel);
+        nav.classList.toggle('is-open', open);
+
+        if (open) {
+          nav.querySelector<HTMLAnchorElement>('a')?.focus();
+        } else if (returnFocus) {
+          toggle.focus();
+        }
+      };
+
+      toggle.addEventListener('click', () => {
+        setMenu(toggle.getAttribute('aria-expanded') !== 'true');
+      });
+
+      nav.addEventListener('click', (event) => {
+        if ((event.target as Element).closest('a')) setMenu(false);
+      });
+
+      document.addEventListener('keydown', (event) => {
+        if (event.key === 'Escape' && toggle.getAttribute('aria-expanded') === 'true') {
+          setMenu(false, true);
+        }
+      });
+
+      document.addEventListener('click', (event) => {
+        if (toggle.getAttribute('aria-expanded') !== 'true') return;
+        if (!header.contains(event.target as Node)) setMenu(false);
+      });
+
+      desktop.addEventListener('change', (event) => {
+        if (event.matches) setMenu(false);
+      });
+    }
   }
 </script>

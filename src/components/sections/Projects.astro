@@ -1,26 +1,69 @@
 ---
 import Edge from '../ui/Edge.astro';
 import { t, type Lang } from '../../i18n';
-import { LINKS, STATS } from '../../data/site';
+import { LINKS, type RepoStats } from '../../data/site';
 
 interface Props {
   lang: Lang;
+  repoStats: RepoStats;
 }
 
-const { lang } = Astro.props;
+const { lang, repoStats } = Astro.props;
 const d = t(lang);
 const featured = d.projects.featured;
 const stats = d.projects.stats;
+
+const demo = {
+  poster: '/projects/radialflow-demo-poster.png',
+  mp4: '/projects/radialflow-demo.mp4',
+  webm: '/projects/radialflow-demo.webm',
+  gif: '/projects/radialflow-demo.gif',
+};
 ---
 <section class="sec sec--dark" id="projects">
   <Edge tone="ink" />
 
   <div class="wrap">
     <h2>{d.nav.projects}</h2>
+    <p class="sec-intro">{d.projects.lead}</p>
 
     <article class="feat">
+      <p class="feat-tag">{d.projects.featuredTag}</p>
       <h3>{featured.name}</h3>
       <p class="tag">{featured.tagline}</p>
+
+      <ul class="tags" aria-label={d.projects.tagsLabel}>
+        {featured.tags.map((tag) => <li>{tag}</li>)}
+      </ul>
+
+      <figure class="feat-media" data-demo>
+        <video
+          class="feat-video"
+          muted
+          loop
+          playsinline
+          preload="metadata"
+          poster={demo.poster}
+          width="760"
+          height="500"
+          aria-label={featured.demoAlt}
+          data-demo-video
+        >
+          <source src={demo.mp4} type="video/mp4" />
+          <source src={demo.webm} type="video/webm" />
+          <img src={demo.gif} alt={featured.demoAlt} width="760" height="500" loading="lazy" />
+        </video>
+        <img
+          class="feat-poster"
+          src={demo.poster}
+          alt={featured.demoAlt}
+          width="760"
+          height="500"
+          loading="lazy"
+          data-demo-poster
+        />
+        <figcaption>{featured.demoCaption}</figcaption>
+      </figure>
 
       <div class="feat-cols">
         <p>{featured.description}</p>
@@ -29,7 +72,18 @@ const stats = d.projects.stats;
         </ul>
       </div>
 
-      <p class="facts">{STATS.stars} {stats.stars}, {STATS.forks} {stats.forks}, {stats.license} {STATS.license}</p>
+      <div class="case">
+        {featured.caseStudy.map((item) => (
+          <div>
+            <h4>{item.label}</h4>
+            <p>{item.text}</p>
+          </div>
+        ))}
+      </div>
+
+      <p class="facts">
+        {repoStats.stars} {stats.stars}, {repoStats.forks} {stats.forks}, {stats.license} {repoStats.license}, {stats.version} {repoStats.version}
+      </p>
 
       <p class="acts">
         <a class="btn" href={LINKS.repo} target="_blank" rel="noopener noreferrer">{featured.ctaGithub}</a>
@@ -52,3 +106,32 @@ const stats = d.projects.stats;
     <a class="ulink" href={LINKS.repos} target="_blank" rel="noopener noreferrer">{d.projects.viewAll}</a>
   </div>
 </section>
+
+<script>
+  const media = document.querySelector<HTMLElement>('[data-demo]');
+  const video = media?.querySelector<HTMLVideoElement>('[data-demo-video]');
+  const reducedMotion = matchMedia('(prefers-reduced-motion: reduce)');
+
+  if (media && video) {
+    const showPoster = () => {
+      media.classList.remove('is-video');
+      video.pause();
+    };
+
+    const play = () => {
+      if (reducedMotion.matches) {
+        showPoster();
+        return;
+      }
+
+      media.classList.add('is-video');
+      video.play().catch(showPoster);
+    };
+
+    video.addEventListener('loadeddata', play, { once: true });
+    video.addEventListener('error', showPoster);
+    reducedMotion.addEventListener('change', play);
+
+    if (video.readyState >= 2) play();
+  }
+</script>

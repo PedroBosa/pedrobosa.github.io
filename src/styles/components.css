@@ -39,7 +39,8 @@
 .on-red {
   background: var(--accent);
   color: #fff;
-  --mute: #ffe9ea;
+  /* Branco puro: 4,68:1 sobre #e0262d (AA para texto normal). */
+  --mute: #fff;
   --rule: rgba(255, 255, 255, 0.4);
 }
 

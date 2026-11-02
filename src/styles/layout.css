@@ -21,6 +21,7 @@
 }
 
 .hdr-in {
+  position: relative;
   display: flex;
   align-items: center;
   gap: 0.8rem;
@@ -157,15 +158,166 @@
   opacity: 1;
 }
 
+/* CTA de CV dentro do menu mobile (no desktop ele já aparece em .hdr-act). */
+.hdr-nav__cv {
+  display: none;
+}
+
+/* Botão hambúrguer: só existe no mobile. */
+.menu-btn {
+  display: none;
+  align-items: center;
+  gap: 0.45rem;
+  padding: 0.4rem 0.75rem;
+  border: 1px solid currentColor;
+  border-radius: 9999px;
+  background: transparent;
+  color: inherit;
+  font: 600 0.8rem var(--display);
+  cursor: pointer;
+  pointer-events: auto;
+}
+
+.menu-btn__bars {
+  display: inline-flex;
+  flex-direction: column;
+  gap: 3px;
+  width: 1rem;
+}
+
+.menu-btn__bars span {
+  display: block;
+  height: 2px;
+  border-radius: 2px;
+  background: currentColor;
+  transition:
+    transform 0.2s var(--ease),
+    opacity 0.2s;
+}
+
+.menu-btn[aria-expanded='true'] .menu-btn__bars span:nth-child(1) {
+  transform: translateY(5px) rotate(45deg);
+}
+
+.menu-btn[aria-expanded='true'] .menu-btn__bars span:nth-child(2) {
+  opacity: 0;
+}
+
+.menu-btn[aria-expanded='true'] .menu-btn__bars span:nth-child(3) {
+  transform: translateY(-5px) rotate(-45deg);
+}
+
 @media (max-width: 940px) {
-  .hdr-nav {
+  .menu-btn {
+    display: inline-flex;
+  }
+
+  /* No mobile os atalhos ficam dentro do menu; o cabeçalho fica enxuto. */
+  .hdr-act {
     display: none;
+  }
+
+  .hdr-nav {
+    position: absolute;
+    top: calc(100% + 0.55rem);
+    left: 0;
+    right: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 0.1rem;
+    max-width: none;
+    max-height: 0;
+    padding: 0 0.5rem;
+    overflow: hidden;
+    border: 1px solid rgba(14, 27, 61, 0.12);
+    border-radius: 1rem;
+    background: var(--paper);
+    color: var(--ink);
+    box-shadow:
+      0 18px 38px -16px rgba(14, 27, 61, 0.45),
+      inset 0 1px 0 rgba(255, 255, 255, 0.7);
+    opacity: 0;
+    visibility: hidden;
+    transition:
+      max-height 0.3s var(--ease),
+      padding 0.3s var(--ease),
+      opacity 0.2s,
+      visibility 0s linear 0.3s;
+  }
+
+  .hdr-nav.is-open {
+    max-height: 30rem;
+    padding: 0.5rem;
+    opacity: 1;
+    visibility: visible;
+    transition:
+      max-height 0.35s var(--ease),
+      padding 0.3s var(--ease),
+      opacity 0.2s,
+      visibility 0s;
+  }
+
+  /* Anula o estado "expandido ao rolar" enquanto o menu está fechado. */
+  .hdr.is-scrolled .hdr-nav {
+    max-width: none;
+    max-height: 0;
+    padding: 0 0.5rem;
+    opacity: 0;
+    visibility: hidden;
+    transition:
+      max-height 0.3s var(--ease),
+      padding 0.3s var(--ease),
+      opacity 0.2s,
+      visibility 0s linear 0.3s;
+  }
+
+  .hdr.is-scrolled .hdr-nav.is-open {
+    max-height: 30rem;
+    padding: 0.5rem;
+    opacity: 1;
+    visibility: visible;
+    transition:
+      max-height 0.35s var(--ease),
+      padding 0.3s var(--ease),
+      opacity 0.2s,
+      visibility 0s;
+  }
+
+  .hdr-nav a {
+    padding: 0.8rem 1rem;
+    border-radius: 0.65rem;
+    font-size: 1rem;
+  }
+
+  .hdr-nav a:hover {
+    background: rgba(14, 27, 61, 0.07);
+  }
+
+  .hdr-nav__cv {
+    display: block;
+    margin-top: 0.35rem;
+    background: var(--accent);
+    color: #fff;
+    text-align: center;
+  }
+
+  .hdr-nav__cv:hover {
+    background: var(--ink);
   }
 }
 
-@media (max-width: 620px) {
-  .hdr-act .sbtn:not(.sbtn--fill) {
+@media (max-width: 380px) {
+  .hdr-in {
+    gap: 0.45rem;
+  }
+
+  .menu-btn__text {
     display: none;
+  }
+
+  .lang {
+    padding-inline: 0.55rem;
   }
 }
 

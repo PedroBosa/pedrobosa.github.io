@@ -18,10 +18,14 @@ const [firstName, lastName] = PROFILE.shortName.split(' ');
     <h1><span>{firstName}</span>{' '}<span>{lastName}</span></h1>
 
     <div class="hero-side">
-      <p class="status">{d.hero.status}</p>
+      <p class="eyebrow">{d.hero.eyebrow}</p>
+      <p class="status">{d.hero.role} · {d.hero.status}</p>
       <p class="lead">{d.hero.lead}</p>
+      <p class="proof">{d.hero.proof}</p>
       <p class="acts">
         <a class="btn" href="#projects">{d.hero.ctaProjects}</a>
+        <a class="ulink" href={LINKS.cv[lang]} download>{d.hero.ctaCv}</a>
+        <a class="ulink" href={`mailto:${LINKS.email}`}>{d.hero.ctaEmail}</a>
         <a class="ulink" href={LINKS.github} target="_blank" rel="noopener noreferrer">{d.hero.ctaGithub}</a>
         {LINKS.linkedin && (
           <a class="ulink" href={LINKS.linkedin} target="_blank" rel="noopener noreferrer">{d.contact.linkedinLabel}</a>

@@ -69,15 +69,31 @@
   display: block;
 }
 
+.eyebrow {
+  font: 700 0.78rem var(--display);
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  opacity: 0.85;
+}
+
 .status {
+  max-width: 34ch;
+  margin-top: 0.35rem;
   font: 700 0.95rem var(--display);
 }
 
 .lead {
-  max-width: 28ch;
+  max-width: 32ch;
   margin-top: 0.9rem;
   font-size: clamp(1.2rem, 2vw, 1.5rem);
   line-height: 1.4;
+}
+
+.proof {
+  max-width: 34ch;
+  margin-top: 0.9rem;
+  color: var(--mute);
+  font: 600 0.88rem / 1.5 var(--display);
 }
 
 .hero .acts {
@@ -169,6 +185,102 @@
 
 .feat .acts {
   margin-top: 1.4rem;
+}
+
+.sec-intro {
+  max-width: 60ch;
+  margin: -1.5rem 0 2.5rem;
+  color: var(--mute);
+}
+
+.feat-tag {
+  margin-bottom: 0.35rem;
+  color: var(--accent-t);
+  font: 700 0.78rem var(--display);
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  list-style: none;
+  padding: 0;
+  margin-top: 1rem;
+}
+
+.tags li {
+  padding: 0.3rem 0.75rem;
+  border: 1px solid var(--rule);
+  border-radius: 9999px;
+  color: var(--mute);
+  font: 600 0.8rem var(--display);
+}
+
+.feat-media {
+  max-width: 760px;
+  margin-top: 1.6rem;
+}
+
+.feat-media video,
+.feat-media .feat-poster {
+  display: block;
+  width: 100%;
+  height: auto;
+  aspect-ratio: 760 / 500;
+  border-radius: 12px;
+  background: #0a1430;
+}
+
+.feat-video {
+  display: none;
+}
+
+.feat-media.is-video .feat-video {
+  display: block;
+}
+
+.feat-media.is-video .feat-poster {
+  display: none;
+}
+
+.feat-media figcaption {
+  margin-top: 0.6rem;
+  color: var(--mute);
+  font-size: 0.9rem;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .feat-media .feat-video {
+    display: none !important;
+  }
+
+  .feat-media .feat-poster {
+    display: block !important;
+  }
+}
+
+.case {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 1.5rem;
+  margin-top: 2rem;
+  padding-top: 1.4rem;
+  border-top: 1px solid var(--rule);
+}
+
+.case h4 {
+  margin-bottom: 0.4rem;
+  color: var(--accent-t);
+  font: 700 0.85rem var(--display);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.case p {
+  color: var(--mute);
+  font-size: 0.95rem;
 }
 
 /* ---------- Formação ---------- */
@@ -277,9 +389,36 @@
   margin-top: 0.3rem;
 }
 
+.contact-acts {
+  margin-top: 1.5rem;
+}
+
 #contact .note {
   grid-column: 1 / -1;
   margin-top: 0;
+}
+
+/* ---------- 404 ---------- */
+
+.not-found {
+  display: grid;
+  align-items: center;
+  min-height: 100svh;
+  padding-block: 7rem 4rem;
+}
+
+.not-found h1 {
+  font: 900 clamp(3.2rem, 12vw, 9rem) / 0.88 var(--display);
+  font-stretch: 70%;
+  letter-spacing: -0.02em;
+}
+
+.not-found .big {
+  margin-top: 1.5rem;
+}
+
+.not-found .acts {
+  margin-top: 2rem;
 }
 
 /* Rabisco que se desenha quando entra na tela (ver Contact.astro). */
@@ -334,6 +473,7 @@
   .about,
   .feat-cols,
   .trio,
+  .case,
   #contact .body {
     grid-template-columns: 1fr;
   }

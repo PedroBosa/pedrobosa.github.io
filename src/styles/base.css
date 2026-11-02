@@ -59,6 +59,15 @@ a {
   padding-inline: var(--pad);
 }
 
+/* O skip link move o foco para cá; o outline grande não é necessário. */
+main {
+  scroll-margin-top: 4.5rem;
+}
+
+main:focus {
+  outline: none;
+}
+
 /* Link "pular para o conteúdo": só aparece com foco do teclado. */
 .skip-link {
   position: fixed;

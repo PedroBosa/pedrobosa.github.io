@@ -1,4 +1,5 @@
 import { defineConfig } from 'astro/config';
+import sitemap from '@astrojs/sitemap';
 
 // https://astro.build/config
 export default defineConfig({
@@ -8,6 +9,8 @@ export default defineConfig({
 
   // Saída 100% estática: nenhum framework JavaScript no cliente.
   output: 'static',
+
+  integrations: [sitemap()],
 
   i18n: {
     defaultLocale: 'pt',

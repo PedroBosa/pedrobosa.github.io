@@ -11,6 +11,7 @@ export const en: Dictionary = {
     description:
       'Portfolio of Pedro Lucas Ferreira Bosa, a developer in training (TADS @ IFPI). Small tools that solve real problems — C#/.NET, web, databases and IoT.',
     ogLocale: 'en_US',
+    jobTitle: 'Developer in training',
   },
 
   nav: {
@@ -24,22 +25,31 @@ export const en: Dictionary = {
   a11y: {
     skip: 'Skip to content',
     mainNav: 'Main navigation',
+    openMenu: 'Open the navigation menu',
+    closeMenu: 'Close the navigation menu',
   },
 
   header: {
     language: 'Language',
     other: 'Português',
     otherShort: 'PT',
+    menu: 'Menu',
     preview: 'Preview',
     github: 'GitHub',
     download: 'Download',
+    cv: 'Download CV',
   },
 
   hero: {
+    eyebrow: 'TADS @ IFPI · Floriano, Piauí, Brazil',
+    role: 'Developer in training',
     status: 'Looking for an IT internship',
-    lead: 'I study Systems Analysis and Development at IFPI in Floriano, Piauí. I write native Windows utilities in C# and I’m looking for an IT internship.',
+    lead: 'I build native Windows utilities in C#/.NET — lightweight, direct software made to solve real problems. I’m looking for an IT internship where I can put that practice to work with a team.',
+    proof: 'Author of RadialFlow · 2× top 3 at the CAIS TECH Marathon · 3,200h of technical training',
     ctaProjects: 'See projects',
     ctaGithub: 'GitHub profile',
+    ctaCv: 'Download CV',
+    ctaEmail: 'Send email',
   },
 
   about: {
@@ -53,6 +63,9 @@ export const en: Dictionary = {
   },
 
   projects: {
+    featuredTag: 'Featured project',
+    lead: 'From the flagship project to smaller experiments — open source, tested and documented.',
+    tagsLabel: 'RadialFlow technologies',
     featured: {
       name: 'RadialFlow',
       tagline: 'The Windows radial menu.',
@@ -64,6 +77,23 @@ export const en: Dictionary = {
         'Native C#/.NET/WPF — lightweight, no Electron',
         'Automated tests running in continuous integration',
       ],
+      tags: ['Windows', 'C#', '.NET', 'WPF', 'Productivity'],
+      demoAlt: 'RadialFlow demo: the radial menu opening around the cursor',
+      demoCaption: 'The menu opens where the cursor is; pick an action and release.',
+      caseStudy: [
+        {
+          label: 'Problem',
+          text: 'Windows context menus hide actions in submenus and take several clicks for repetitive tasks.',
+        },
+        {
+          label: 'Approach',
+          text: 'A native C#/.NET/WPF radial menu opened at the cursor, with file conversion through FFmpeg, Pandoc and LibreOffice.',
+        },
+        {
+          label: 'Result',
+          text: 'Action in two movements, with no extra windows; open source, CI-tested and shipped as Windows releases.',
+        },
+      ],
       ctaGithub: 'View on GitHub',
       ctaDownload: 'Download installer',
     },
@@ -71,6 +101,7 @@ export const en: Dictionary = {
       stars: 'stars',
       forks: 'forks',
       license: 'license',
+      version: 'version',
     },
     othersTitle: 'Also on GitHub',
     others: [
@@ -161,6 +192,8 @@ export const en: Dictionary = {
     emailLabel: 'Email',
     linkedinLabel: 'LinkedIn',
     githubLabel: 'GitHub',
+    ctaEmail: 'Send email',
+    ctaCv: 'Download CV',
     availability: 'Available for an IT internship',
     location: 'Floriano, Piauí — remote or on-site',
   },
