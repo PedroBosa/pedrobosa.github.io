@@ -231,39 +231,54 @@
   opacity: 0.06;
 }
 
-/* Pauta musical ao fundo da seção Sobre (ui/Staff.astro).
-   Atravessa a seção inteira e as pontas somem num degradê, para nada parecer
-   cortado. Opacidade baixa: é textura, não pode competir com o texto. */
-.staff {
+/* Malha de diagramação ao fundo da seção Sobre (ui/Mesh.astro).
+   As colunas do grid, cada uma com a sua cor, e as pontas somem num degradê.
+   A onda é feita só com atraso de animação por coluna — custo desprezível. */
+.mesh {
   position: absolute;
-  top: 50%;
-  left: 0;
+  inset: 0;
   width: 100%;
-  height: auto;
-  transform: translateY(-50%);
+  height: 100%;
   pointer-events: none;
-  -webkit-mask-image: linear-gradient(to right, transparent, #000 12%, #000 88%, transparent);
-  mask-image: linear-gradient(to right, transparent, #000 12%, #000 88%, transparent);
+  -webkit-mask-image: linear-gradient(to bottom, transparent, #000 18%, #000 82%, transparent);
+  mask-image: linear-gradient(to bottom, transparent, #000 18%, #000 82%, transparent);
 }
 
-.staff-lines line {
+.mesh-rows line {
   stroke: var(--ink);
   stroke-width: 1;
-  opacity: 0.1;
+  opacity: 0.045;
 }
 
-.staff-notes {
-  fill: var(--accent);
-  stroke: none;
-  opacity: 0.18;
+.mesh-columns line {
+  stroke: var(--c);
+  stroke-width: 1;
+  opacity: 0.12;
+  animation: mesh-wave 9s ease-in-out infinite;
+  animation-delay: calc(var(--i) * -0.45s);
 }
 
-/* No celular a pauta ficaria minúscula se coubesse na largura: ela é esticada
-   além da tela (as pontas saem de quadro, então nada parece cortado) e as
-   linhas usam `vector-effect` para continuarem com 1px. */
-@media (max-width: 960px) {
-  .staff {
-    width: 220%;
-    left: -60%;
+@keyframes mesh-wave {
+  0%,
+  100% {
+    opacity: 0.12;
+  }
+  50% {
+    opacity: 0.34;
+  }
+}
+
+/* Sem animação: a malha fica parada, num tom único e médio. */
+@media (prefers-reduced-motion: reduce) {
+  .mesh-columns line {
+    animation: none;
+    opacity: 0.2;
+  }
+}
+
+/* No celular 13 colunas em 390px viram código de barras: metade delas sai. */
+@media (max-width: 640px) {
+  .mesh-columns line:nth-child(even) {
+    display: none;
   }
 }

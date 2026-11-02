@@ -1,0 +1,43 @@
+---
+/**
+ * Malha de diagramação ao fundo da seção Sobre.
+ *
+ * As colunas de um grid editorial, com uma linha de base horizontal por cima.
+ * Cada coluna tem uma cor da paleta do site e pulsa com um atraso próprio, o
+ * que faz uma onda lenta atravessar a malha da esquerda para a direita.
+ *
+ * É textura: `aria-hidden`, `pointer-events: none`, opacidade baixa e sem
+ * animação em `prefers-reduced-motion` (ver .mesh em components.css).
+ */
+const COLUMNS = 12;
+const ROWS = 8;
+
+// Reaproveita as cores do hero: azul-tinta, vermelho, coral e azul claro.
+const COLORS = ['#0e1b3d', '#e0262d', '#ff6b70', '#7d95cf'];
+
+const columns = Array.from({ length: COLUMNS + 1 }, (_, i) => ({
+  x: (1440 / COLUMNS) * i,
+  color: COLORS[i % COLORS.length],
+  index: i,
+}));
+
+const rows = Array.from({ length: ROWS + 1 }, (_, i) => 900 / ROWS * i);
+---
+<svg class="mesh" viewBox="0 0 1440 900" preserveAspectRatio="none" aria-hidden="true" focusable="false">
+  <g class="mesh-rows">
+    {rows.map((y) => <line x1="0" y1={y} x2="1440" y2={y} vector-effect="non-scaling-stroke" />)}
+  </g>
+
+  <g class="mesh-columns">
+    {columns.map((column) => (
+      <line
+        x1={column.x}
+        y1="0"
+        x2={column.x}
+        y2="900"
+        style={`--c: ${column.color}; --i: ${column.index}`}
+        vector-effect="non-scaling-stroke"
+      />
+    ))}
+  </g>
+</svg>
