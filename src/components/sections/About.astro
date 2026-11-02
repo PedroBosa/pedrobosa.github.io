@@ -1,13 +1,18 @@
 ---
 import Mesh from '../ui/Mesh.astro';
 import { t, type Lang } from '../../i18n';
+import { FALLBACK_STATS, type RepoStats } from '../../data/site';
 
 interface Props {
   lang: Lang;
+  repoStats?: RepoStats;
 }
 
-const { lang } = Astro.props;
+const { lang, repoStats = FALLBACK_STATS } = Astro.props;
 const d = t(lang);
+const p2 = d.about.p2
+  .replace(`${FALLBACK_STATS.stars} `, `${repoStats.stars} `)
+  .replace(`${FALLBACK_STATS.forks} `, `${repoStats.forks} `);
 ---
 <section class="sec" id="about">
   <Mesh />
@@ -17,7 +22,7 @@ const d = t(lang);
 
     <div class="about">
       <p class="statement">{d.about.p1}</p>
-      <p class="prose">{d.about.p2}</p>
+      <p class="prose">{p2}</p>
     </div>
 
     <dl class="trio">

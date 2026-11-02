@@ -7,8 +7,8 @@ import Layout from '../layouts/Layout.astro';
 import Hero from './sections/Hero.astro';
 import About from './sections/About.astro';
 import Projects from './sections/Projects.astro';
-import Education from './sections/Education.astro';
 import Stack from './sections/Stack.astro';
+import Education from './sections/Education.astro';
 import Contact from './sections/Contact.astro';
 import type { Lang } from '../i18n';
 import { getRepoStats } from '../data/site';
@@ -22,9 +22,9 @@ const repoStats = await getRepoStats();
 ---
 <Layout lang={lang}>
   <Hero lang={lang} />
-  <About lang={lang} />
+  <About lang={lang} repoStats={repoStats} />
   <Projects lang={lang} repoStats={repoStats} />
-  <Education lang={lang} />
   <Stack lang={lang} />
+  <Education lang={lang} />
   <Contact lang={lang} />
 </Layout>

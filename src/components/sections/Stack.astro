@@ -1,4 +1,5 @@
 ---
+import Edge from '../ui/Edge.astro';
 import { t, type Lang } from '../../i18n';
 
 interface Props {
@@ -9,6 +10,8 @@ const { lang } = Astro.props;
 const d = t(lang);
 ---
 <section class="sec" id="stack">
+  <Edge tone="bg" />
+
   <div class="wrap">
     <h2>{d.nav.stack}</h2>
     <p class="sec-intro">{d.stack.lead}</p>

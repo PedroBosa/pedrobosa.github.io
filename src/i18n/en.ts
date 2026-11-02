@@ -17,8 +17,8 @@ export const en: Dictionary = {
   nav: {
     about: 'About',
     projects: 'Projects',
-    education: 'Education',
     stack: 'Stack',
+    education: 'Education',
     contact: 'Contact',
   },
 
@@ -118,6 +118,21 @@ export const en: Dictionary = {
     viewAll: 'See all repositories',
   },
 
+  stack: {
+    lead: 'Technologies and tools I use and study, organised by area.',
+    groups: [
+      { title: 'Languages', items: ['C', 'C++', 'C#', 'Java', 'Python', 'JavaScript', 'TypeScript', 'PHP'] },
+      { title: 'Desktop & .NET', items: ['.NET', 'WPF', 'XAML'] },
+      { title: 'Web', items: ['HTML', 'CSS', 'Astro'] },
+      { title: 'Data', items: ['SQL', 'Data modelling'] },
+      { title: 'IoT & Systems', items: ['ESP32', 'PlatformIO'] },
+      { title: 'Tooling', items: ['Git', 'GitHub Actions', 'CI/CD', 'FFmpeg', 'Pandoc', 'LibreOffice'] },
+      { title: 'Design & Media', items: ['Photoshop', 'Illustrator', 'Vectorization', 'Image editing'] },
+      { title: 'Productivity', items: ['Office suite'] },
+    ],
+    note: 'Learning and practising continuously — this list grows along with the projects.',
+  },
+
   education: {
     currentLabel: 'In progress',
     timeline: [
@@ -129,32 +144,32 @@ export const en: Dictionary = {
         current: true,
       },
       {
-        period: '2026',
-        title: 'Desafio Liga Jovem — 4th edition',
-        org: 'SEBRAE',
-        detail: '30h',
-        current: false,
-      },
-      {
         period: '2023 — 2025',
         title: 'Technical Degree in Computing',
         org: 'IFPI Campus Floriano',
         detail: '3,200h · Completed in 2025',
         current: false,
       },
+    ],
+    complementaryTitle: 'Complementary courses',
+    complementary: [
+      {
+        period: '2026',
+        title: 'Desafio Liga Jovem — 4th edition',
+        org: 'SEBRAE',
+        detail: '30h',
+      },
       {
         period: '2025',
         title: 'Desafio Liga Jovem — 3rd edition',
         org: 'SEBRAE',
         detail: '30h',
-        current: false,
       },
       {
         period: '2023',
         title: 'Basic Computing',
         org: 'SENAI',
         detail: '40h',
-        current: false,
       },
     ],
     awardsTitle: 'Awards',
@@ -165,21 +180,6 @@ export const en: Dictionary = {
         detail: 'IFPI project showcase',
       },
     ],
-  },
-
-  stack: {
-    lead: 'Technologies and tools I use and study, organised by area.',
-    groups: [
-      { title: 'Languages', items: ['C', 'C++', 'C#', 'Java', 'Python', 'JavaScript', 'TypeScript', 'PHP'] },
-      { title: 'Desktop & .NET', items: ['.NET', 'WPF', 'XAML'] },
-      { title: 'Web', items: ['HTML', 'CSS', 'Astro'] },
-      { title: 'Data', items: ['SQL', 'Data modelling'] },
-      { title: 'IoT & Systems', items: ['ESP32', 'PlatformIO'] },
-      { title: 'Tooling', items: ['Git', 'GitHub Actions', 'CI/CD', 'FFmpeg', 'Pandoc', 'LibreOffice'] },
-      { title: 'Design & Media', items: ['Photoshop', 'Illustrator', 'Vectorization', 'Image editing'] },
-      { title: 'Productivity', items: ['Office suite', 'Word', 'Excel', 'PowerPoint'] },
-    ],
-    note: 'Learning and practising continuously — this list grows along with the projects.',
   },
 
   contact: {

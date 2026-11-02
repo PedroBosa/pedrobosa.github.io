@@ -28,6 +28,16 @@ const education = d.education;
       ))}
     </ol>
 
+    <h3 class="sub">{education.complementaryTitle}</h3>
+    <ul class="comp">
+      {education.complementary.map((item) => (
+        <li>
+          <span class="comp-title">{item.title}</span>
+          <span class="comp-meta">{item.org} · {item.detail} · {item.period}</span>
+        </li>
+      ))}
+    </ul>
+
     <h3 class="sub">{education.awardsTitle}</h3>
     <ul class="hl hl--wide">
       {education.awards.map((award) => <li>{award.title} ({award.detail})</li>)}

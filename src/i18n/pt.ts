@@ -15,8 +15,8 @@ export const pt = {
   nav: {
     about: 'Sobre',
     projects: 'Projetos',
-    education: 'Formação',
     stack: 'Stack',
+    education: 'Formação',
     contact: 'Contato',
   },
 
@@ -116,6 +116,21 @@ export const pt = {
     viewAll: 'Ver todos os repositórios',
   },
 
+  stack: {
+    lead: 'Tecnologias e ferramentas que uso e estudo, organizadas por área.',
+    groups: [
+      { title: 'Linguagens', items: ['C', 'C++', 'C#', 'Java', 'Python', 'JavaScript', 'TypeScript', 'PHP'] },
+      { title: 'Desktop & .NET', items: ['.NET', 'WPF', 'XAML'] },
+      { title: 'Web', items: ['HTML', 'CSS', 'Astro'] },
+      { title: 'Dados', items: ['SQL', 'Modelagem de dados'] },
+      { title: 'IoT & Sistemas', items: ['ESP32', 'PlatformIO'] },
+      { title: 'Ferramentas', items: ['Git', 'GitHub Actions', 'CI/CD', 'FFmpeg', 'Pandoc', 'LibreOffice'] },
+      { title: 'Design & Mídia', items: ['Photoshop', 'Illustrator', 'Vetorização', 'Edição de imagens'] },
+      { title: 'Produtividade', items: ['Pacote Office'] },
+    ],
+    note: 'Aprendendo e praticando continuamente — esta lista cresce junto com os projetos.',
+  },
+
   education: {
     currentLabel: 'Em curso',
     timeline: [
@@ -127,32 +142,32 @@ export const pt = {
         current: true,
       },
       {
-        period: '2026',
-        title: 'Desafio Liga Jovem — 4ª edição',
-        org: 'SEBRAE',
-        detail: '30h',
-        current: false,
-      },
-      {
         period: '2023 — 2025',
         title: 'Técnico em Informática',
         org: 'IFPI Campus Floriano',
         detail: '3.200h · Conclusão em 2025',
         current: false,
       },
+    ],
+    complementaryTitle: 'Cursos complementares',
+    complementary: [
+      {
+        period: '2026',
+        title: 'Desafio Liga Jovem — 4ª edição',
+        org: 'SEBRAE',
+        detail: '30h',
+      },
       {
         period: '2025',
         title: 'Desafio Liga Jovem — 3ª edição',
         org: 'SEBRAE',
         detail: '30h',
-        current: false,
       },
       {
         period: '2023',
         title: 'Informática Básica',
         org: 'SENAI',
         detail: '40h',
-        current: false,
       },
     ],
     awardsTitle: 'Conquistas',
@@ -163,21 +178,6 @@ export const pt = {
         detail: 'Mostra de trabalhos do IFPI',
       },
     ],
-  },
-
-  stack: {
-    lead: 'Tecnologias e ferramentas que uso e estudo, organizadas por área.',
-    groups: [
-      { title: 'Linguagens', items: ['C', 'C++', 'C#', 'Java', 'Python', 'JavaScript', 'TypeScript', 'PHP'] },
-      { title: 'Desktop & .NET', items: ['.NET', 'WPF', 'XAML'] },
-      { title: 'Web', items: ['HTML', 'CSS', 'Astro'] },
-      { title: 'Dados', items: ['SQL', 'Modelagem de dados'] },
-      { title: 'IoT & Sistemas', items: ['ESP32', 'PlatformIO'] },
-      { title: 'Ferramentas', items: ['Git', 'GitHub Actions', 'CI/CD', 'FFmpeg', 'Pandoc', 'LibreOffice'] },
-      { title: 'Design & Mídia', items: ['Photoshop', 'Illustrator', 'Vetorização', 'Edição de imagens'] },
-      { title: 'Produtividade', items: ['Pacote Office', 'Word', 'Excel', 'PowerPoint'] },
-    ],
-    note: 'Aprendendo e praticando continuamente — esta lista cresce junto com os projetos.',
   },
 
   contact: {

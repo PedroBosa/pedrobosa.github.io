@@ -121,8 +121,7 @@
 
 /* ---------- Sobre ---------- */
 
-#about,
-#stack {
+#about {
   overflow: hidden; /* contém a malha de fundo da seção */
 }
 
@@ -282,41 +281,6 @@
   font-size: 0.95rem;
 }
 
-/* ---------- Formação ---------- */
-
-.tl {
-  list-style: none;
-  padding: 0;
-}
-
-.tl li {
-  display: grid;
-  grid-template-columns: 13rem 1fr;
-  gap: 1rem;
-  padding: 1.2rem 0;
-  border-top: 1px solid var(--rule);
-}
-
-.when {
-  font: 800 clamp(1.2rem, 2.4vw, 1.7rem) / 1.1 var(--display);
-  font-stretch: 85%;
-  font-variant-numeric: tabular-nums;
-}
-
-.tl h3 {
-  font: 700 1.15rem var(--display);
-}
-
-.tl p {
-  color: var(--mute);
-  font-size: 0.95rem;
-}
-
-.tl .now .when,
-.tl .now h3 {
-  color: var(--accent-t);
-}
-
 /* ---------- Stack ---------- */
 
 .stack div {
@@ -353,6 +317,65 @@
   border-radius: 9999px;
   background: var(--paper);
   font: 600 0.9rem / 1.2 var(--display);
+}
+
+/* ---------- Formação ---------- */
+
+.tl {
+  list-style: none;
+  padding: 0;
+}
+
+.tl li {
+  display: grid;
+  grid-template-columns: 13rem 1fr;
+  gap: 1rem;
+  padding: 1.2rem 0;
+  border-top: 1px solid var(--rule);
+}
+
+.when {
+  font: 800 clamp(1.2rem, 2.4vw, 1.7rem) / 1.1 var(--display);
+  font-stretch: 85%;
+  font-variant-numeric: tabular-nums;
+}
+
+.tl h3 {
+  font: 700 1.15rem var(--display);
+}
+
+.tl p {
+  color: var(--mute);
+  font-size: 0.95rem;
+}
+
+.tl .now .when,
+.tl .now h3 {
+  color: var(--accent-t);
+}
+
+.comp {
+  list-style: none;
+  padding: 0;
+  display: grid;
+  gap: 0.45rem;
+  font-size: 0.92rem;
+}
+
+.comp li {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 0.25rem 0.65rem;
+}
+
+.comp-title {
+  font: 600 0.92rem var(--display);
+}
+
+.comp-meta {
+  color: var(--mute);
+  font-size: 0.88rem;
 }
 
 /* ---------- Contato ---------- */
