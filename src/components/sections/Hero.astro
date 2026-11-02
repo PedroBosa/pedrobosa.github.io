@@ -38,116 +38,679 @@ const [firstName, lastName] = PROFILE.shortName.split(' ');
 
 <script>
   /**
-   * Rastro de tinta que segue o cursor sobre o hero.
-   * Sem interação por 1,8 s, um pincel automático continua desenhando.
-   * Desativado para quem prefere menos movimento.
+   * Pincel de tinta do hero.
+   *
+   * Em vez de uma linha de largura fixa, o traço imita um pincel:
+   * - a ponta segue o cursor com um pequeno atraso (estabilizador);
+   * - a largura cai com a velocidade (pressão simulada);
+   * - cada segmento é um polígono preenchido, com cerdas e sangramento;
+   * - arremetidas rápidas soltam respingos;
+   * - quando o mouse fica parado, um pincel automático desenha gestos
+   *   caligráficos e dá uma pausa entre eles.
+   *
+   * Tudo em canvas 2D, sem dependências. Desligado em prefers-reduced-motion.
    */
-  const hero = document.getElementById('home') as HTMLElement;
-  const canvas = hero.querySelector<HTMLCanvasElement>('canvas.paint');
-  const prefersReducedMotion = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const hero = document.getElementById('home') as HTMLElement | null;
+  const canvas = hero?.querySelector<HTMLCanvasElement>('canvas.paint');
+  const motionQuery = matchMedia('(prefers-reduced-motion: reduce)');
 
-  if (canvas && !prefersReducedMotion) {
-    const ctx = canvas.getContext('2d')!;
-    const COLORS = ['#0e1b3d', '#ff8a90', '#8f0f16'];
-    const COLOR_CHANGE_DISTANCE = 260; // px percorridos antes de trocar de cor
-    const IDLE_BEFORE_AUTO = 1800; // ms parado até o pincel automático entrar
-    const FADE_ALPHA = 0.028; // quanto o rastro some a cada quadro
+  if (hero && canvas) {
+    const ctx = canvas.getContext('2d');
 
-    let width = 0;
-    let height = 0;
+    if (ctx) {
+      type RGB = [number, number, number];
+      type Point = { x: number; y: number };
+      type Droplet = {
+        x: number;
+        y: number;
+        vx: number;
+        vy: number;
+        r: number;
+        life: number;
+        maxLife: number;
+        color: RGB;
+      };
+      type AutoGesture = {
+        points: Point[];
+        duration: number;
+        colorT: number;
+        seed: number;
+      };
 
-    const resize = () => {
-      const dpr = Math.min(devicePixelRatio || 1, 2);
-      width = hero.clientWidth;
-      height = hero.clientHeight;
-      canvas.width = width * dpr;
-      canvas.height = height * dpr;
-      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-      ctx.lineCap = 'round';
-      ctx.lineJoin = 'round';
-    };
-    resize();
-    addEventListener('resize', resize);
+      const TAU = Math.PI * 2;
+      const IDLE_BEFORE_AUTO = 1600;
+      const IDLE_BEFORE_RELEASE = 90;
+      const TELEPORT_DISTANCE = 260;
+      const MAX_PARTICLES = 90;
 
-    let prevX = 0;
-    let prevY = 0;
-    let hasPrev = false;
-    let colorIndex = 0;
-    let colorDistance = 0;
+      // Azul-tinta, vermelho profundo, coral e rosa. O creme fica só para
+      // respingos e brilhos, senão o traço rápido vira marca-texto.
+      const PALETTE: RGB[] = [
+        [14, 27, 61],
+        [143, 15, 22],
+        [255, 107, 112],
+        [255, 179, 184],
+      ];
+      const HIGHLIGHT: RGB = [255, 232, 214];
 
-    /** Desenha um segmento do ponto anterior até (x, y); traços rápidos ficam mais finos. */
-    const drawSegment = (x: number, y: number) => {
-      if (hasPrev) {
-        const step = Math.hypot(x - prevX, y - prevY);
-        colorDistance += step;
-        if (colorDistance > COLOR_CHANGE_DISTANCE) {
-          colorDistance = 0;
-          colorIndex = (colorIndex + 1) % COLORS.length;
-        }
-        ctx.strokeStyle = COLORS[colorIndex];
-        ctx.globalAlpha = 0.9;
-        ctx.lineWidth = Math.max(8, Math.min(46, 60 - step * 1.2));
-        ctx.beginPath();
-        ctx.moveTo(prevX, prevY);
-        ctx.lineTo(x, y);
-        ctx.stroke();
-      }
-      prevX = x;
-      prevY = y;
-      hasPrev = true;
-    };
+      // Cada cerda tem deslocamento, espessura, opacidade e sombra próprios.
+      const BRISTLES = [
+        { offset: -0.3, width: 0.1, alpha: 0.28, shade: 0.5 },
+        { offset: -0.02, width: 0.06, alpha: 0.18, shade: 0.7 },
+        { offset: 0.24, width: 0.09, alpha: 0.24, shade: 0.55 },
+        { offset: 0.38, width: 0.07, alpha: 0.18, shade: 0.65 },
+      ];
 
-    let idle = 0;
-    let auto = false;
-    let autoTime = 0;
+      // Gestos em coordenadas normalizadas; o pincel automático escolhe um.
+      // No desktop eles ficam na metade esquerda, longe da coluna de texto.
+      const AUTO_PATHS: Array<Array<[number, number]>> = [
+        [[-0.06, 0.16], [0.24, 0.04], [0.18, 0.62], [0.46, 0.86]],
+        [[-0.04, 0.9], [0.14, 0.72], [0.34, 0.94], [0.52, 0.78]],
+        [[-0.02, 0.42], [0.08, 0.12], [0.3, 0.06], [0.44, 0.24]],
+        [[0.0, 1.0], [0.18, 0.8], [0.32, 0.9], [0.5, 0.7]],
+        [[0.02, 0.08], [0.18, 0.2], [0.06, 0.6], [0.2, 0.92]],
+        [[0.08, 0.86], [0.22, 0.7], [0.36, 0.82], [0.44, 0.94]],
+      ];
 
-    hero.addEventListener('pointermove', (event) => {
-      const rect = hero.getBoundingClientRect();
-      if (auto) {
-        auto = false;
-        hasPrev = false;
-      }
-      idle = 0;
-      drawSegment(event.clientX - rect.left, event.clientY - rect.top);
-    });
-    hero.addEventListener('pointerleave', () => {
-      hasPrev = false;
-    });
+      // No celular o texto ocupa a largura toda; os gestos ficam atrás do nome.
+      const AUTO_PATHS_NARROW: Array<Array<[number, number]>> = [
+        [[-0.05, 0.28], [0.24, 0.24], [0.18, 0.42], [0.5, 0.36]],
+        [[-0.04, 0.46], [0.2, 0.32], [0.38, 0.48], [0.6, 0.34]],
+        [[0.0, 0.44], [0.16, 0.3], [0.34, 0.44], [0.52, 0.32]],
+      ];
 
-    // Só anima enquanto o hero está visível.
-    let visible = true;
-    new IntersectionObserver(([entry]) => {
-      visible = entry.isIntersecting;
-    }).observe(hero);
+      const clamp = (value: number, min: number, max: number) =>
+        Math.min(max, Math.max(min, value));
 
-    let lastFrame = performance.now();
-    const loop = (now: number) => {
-      requestAnimationFrame(loop);
-      if (!visible) return;
+      const mix = (a: number, b: number, t: number) => a + (b - a) * t;
 
-      const delta = now - lastFrame;
-      lastFrame = now;
-      idle += delta;
+      const mixColor = (a: RGB, b: RGB, t: number): RGB => [
+        mix(a[0], b[0], t),
+        mix(a[1], b[1], t),
+        mix(a[2], b[2], t),
+      ];
 
-      // Faz o rastro desaparecer aos poucos.
-      ctx.globalCompositeOperation = 'destination-out';
-      ctx.globalAlpha = FADE_ALPHA;
-      ctx.fillRect(0, 0, width, height);
-      ctx.globalCompositeOperation = 'source-over';
+      const shade = (color: RGB, factor: number): RGB => [
+        color[0] * factor,
+        color[1] * factor,
+        color[2] * factor,
+      ];
 
-      // Pincel automático quando o visitante não está mexendo o mouse.
-      if (idle > IDLE_BEFORE_AUTO) {
-        if (!auto) {
-          auto = true;
-          hasPrev = false;
-        }
-        autoTime += delta * 0.0006;
-        drawSegment(
-          width * (0.5 + 0.4 * Math.sin(autoTime * 1.7)),
-          height * (0.55 + 0.3 * Math.sin(autoTime * 2.3 + 1)),
+      const tint = (color: RGB, factor: number): RGB =>
+        mixColor(color, [255, 255, 255], factor);
+
+      const rgba = (color: RGB, alpha: number) =>
+        `rgba(${color[0] | 0}, ${color[1] | 0}, ${color[2] | 0}, ${alpha})`;
+
+      const samplePalette = (t: number): RGB => {
+        const x = clamp(t, 0, 1) * (PALETTE.length - 1);
+        const index = Math.floor(x);
+        const fraction = x - index;
+        const a = PALETTE[index];
+        const b = PALETTE[Math.min(index + 1, PALETTE.length - 1)];
+        return mixColor(a, b, fraction);
+      };
+
+      const easeInOutCubic = (t: number) =>
+        t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2;
+
+      const cubicPoint = (points: Point[], t: number): Point => {
+        const [a, b, c, d] = points;
+        const u = 1 - t;
+        return {
+          x: u * u * u * a.x + 3 * u * u * t * b.x + 3 * u * t * t * c.x + t * t * t * d.x,
+          y: u * u * u * a.y + 3 * u * u * t * b.y + 3 * u * t * t * c.y + t * t * t * d.y,
+        };
+      };
+
+      let width = 0;
+      let height = 0;
+      let dpr = 1;
+      let resized = false;
+      let rect = hero.getBoundingClientRect();
+      let enabled = !motionQuery.matches;
+
+      const resize = () => {
+        rect = hero.getBoundingClientRect();
+        const nextWidth = Math.max(1, rect.width);
+        const nextHeight = Math.max(1, rect.height);
+        // O canvas é só textura: 1,5x em telas grandes já é nítido e poupa GPU.
+        const nextDpr = Math.min(
+          devicePixelRatio || 1,
+          nextWidth * nextHeight > 1_000_000 ? 1.5 : 2,
         );
+
+        if (nextWidth === width && nextHeight === height && nextDpr === dpr) return;
+
+        width = nextWidth;
+        height = nextHeight;
+        dpr = nextDpr;
+        resized = true;
+        canvas.width = Math.round(width * dpr);
+        canvas.height = Math.round(height * dpr);
+        ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+        ctx.lineCap = 'round';
+        ctx.lineJoin = 'round';
+      };
+
+      const updateRect = () => {
+        rect = hero.getBoundingClientRect();
+      };
+
+      resize();
+      addEventListener('resize', resize);
+      addEventListener('scroll', updateRect, { passive: true });
+      hero.addEventListener('pointerenter', updateRect);
+
+      if ('ResizeObserver' in window) {
+        const resizeObserver = new ResizeObserver(resize);
+        resizeObserver.observe(hero);
       }
-    };
-    requestAnimationFrame(loop);
+
+      const maxBrush = () => clamp(Math.min(width, height) * 0.045, 12, 38);
+
+      const brush = {
+        x: 0,
+        y: 0,
+        width: 0,
+        color: PALETTE[0] as RGB,
+        dx: 1,
+        dy: 0,
+        active: false,
+      };
+
+      let strokeDistance = 0;
+
+      let targetX = 0;
+      let targetY = 0;
+      let lastPointer = performance.now();
+
+      // Velocidade do ponteiro (não do pincel): quando o cursor para, o pincel
+      // ainda se aproxima do alvo, mas não deve engrossar nem escurecer por isso.
+      let pointerSpeed = 0;
+      let pointerX = 0;
+      let pointerY = 0;
+      let pointerAt = 0;
+
+      const droplets: Droplet[] = [];
+      let lastSpawn = 0;
+
+      const spawnDroplets = (
+        x: number,
+        y: number,
+        vx: number,
+        vy: number,
+        color: RGB,
+        count: number,
+      ) => {
+        const direction = Math.atan2(vy, vx);
+
+        for (let i = 0; i < count; i++) {
+          const angle = direction + (Math.random() - 0.5) * 2.4;
+          const speed = 0.03 + Math.random() * 0.18;
+          const life = 350 + Math.random() * 500;
+
+          droplets.push({
+            x: x + (Math.random() - 0.5) * 10,
+            y: y + (Math.random() - 0.5) * 10,
+            vx: Math.cos(angle) * speed + vx * 0.1,
+            vy: Math.sin(angle) * speed + vy * 0.1,
+            r: 0.6 + Math.random() * 2.4,
+            life,
+            maxLife: life,
+            color: Math.random() < 0.18 ? HIGHLIGHT : color,
+          });
+        }
+
+        if (droplets.length > MAX_PARTICLES) {
+          droplets.splice(0, droplets.length - MAX_PARTICLES);
+        }
+      };
+
+      /** Um quadrilátero com larguras diferentes nas duas pontas. */
+      const ribbon = (
+        x0: number,
+        y0: number,
+        w0: number,
+        x1: number,
+        y1: number,
+        w1: number,
+        color: RGB,
+        alpha: number,
+        offset = 0,
+      ) => {
+        const dx = x1 - x0;
+        const dy = y1 - y0;
+        const length = Math.hypot(dx, dy);
+        if (length < 0.01 || w1 < 0) return;
+
+        const nx = -dy / length;
+        const ny = dx / length;
+        const ox = nx * offset;
+        const oy = ny * offset;
+        const h0 = w0 * 0.5;
+        const h1 = w1 * 0.5;
+
+        ctx.fillStyle = rgba(color, alpha);
+        ctx.beginPath();
+        ctx.moveTo(x0 + ox + nx * h0, y0 + oy + ny * h0);
+        ctx.lineTo(x1 + ox + nx * h1, y1 + oy + ny * h1);
+        ctx.lineTo(x1 + ox - nx * h1, y1 + oy - ny * h1);
+        ctx.lineTo(x0 + ox - nx * h0, y0 + oy - ny * h0);
+        ctx.closePath();
+        ctx.fill();
+      };
+
+      const paintSegment = (
+        x0: number,
+        y0: number,
+        w0: number,
+        c0: RGB,
+        x1: number,
+        y1: number,
+        w1: number,
+        c1: RGB,
+        strength = 1,
+      ) => {
+        // Sangramento: uma borda úmida, mais escura e discreta em volta do traço.
+        const bleedColor = shade(mixColor(c0, c1, 0.5), 0.58);
+        ribbon(x0, y0, w0 * 1.18, x1, y1, w1 * 1.18, bleedColor, 0.08 * strength);
+
+        // Corpo do pincel: uma camada sólida. A cor é a média do segmento,
+        // não a cor final, para o traço não escurecer de repente na ponta.
+        const bodyColor = mixColor(c0, c1, 0.5);
+        ribbon(x0, y0, w0, x1, y1, w1, bodyColor, 0.94 * strength);
+
+        // Meia-lua na ponta: cobre a emenda entre segmentos e arredonda a
+        // saída do pincel sem empilhar um círculo escuro em cada camada.
+        const angle = Math.atan2(y1 - y0, x1 - x0);
+        ctx.fillStyle = rgba(bodyColor, 0.94 * strength);
+        ctx.beginPath();
+        ctx.arc(
+          x1,
+          y1,
+          Math.max(0, w1 * 0.5),
+          angle - Math.PI / 2,
+          angle + Math.PI / 2,
+        );
+        ctx.closePath();
+        ctx.fill();
+
+        // Cerdas: sulcos mais escuros que dão textura de tinta seca.
+        const detail = Math.min(w0, w1) > 12 ? BRISTLES.length : 1;
+        for (let i = 0; i < detail; i++) {
+          const bristle = BRISTLES[i];
+          ribbon(
+            x0,
+            y0,
+            w0 * bristle.width,
+            x1,
+            y1,
+            w1 * bristle.width,
+            shade(c1, bristle.shade),
+            bristle.alpha * strength,
+            bristle.offset * Math.min(w0, w1),
+          );
+        }
+
+        // Fio de luz e fio de sombra só em traços largos; nos finos eles
+        // viravam pontilhados soltos nas laterais.
+        if (Math.min(w0, w1) > 16) {
+          ribbon(
+            x0,
+            y0,
+            w0 * 0.035,
+            x1,
+            y1,
+            w1 * 0.035,
+            tint(c1, 0.55),
+            0.15 * strength,
+            -0.3 * Math.min(w0, w1),
+          );
+          ribbon(
+            x0,
+            y0,
+            w0 * 0.04,
+            x1,
+            y1,
+            w1 * 0.04,
+            shade(c1, 0.35),
+            0.2 * strength,
+            0.32 * Math.min(w0, w1),
+          );
+        }
+      };
+
+      /** Termina o traço com uma ponta fina, como um pincel saindo do papel. */
+      const releaseBrush = () => {
+        if (!brush.active) return;
+
+        const tail = Math.max(6, brush.width * 0.35);
+        paintSegment(
+          brush.x,
+          brush.y,
+          brush.width,
+          brush.color,
+          brush.x + brush.dx * tail,
+          brush.y + brush.dy * tail,
+          0,
+          brush.color,
+          0.85,
+        );
+        brush.active = false;
+      };
+
+      const updateDroplets = (dt: number) => {
+        for (let i = droplets.length - 1; i >= 0; i--) {
+          const drop = droplets[i];
+          drop.life -= dt;
+
+          if (drop.life <= 0) {
+            droplets.splice(i, 1);
+            continue;
+          }
+
+          drop.x += drop.vx * dt;
+          drop.y += drop.vy * dt;
+          drop.vy += 0.00035 * dt;
+          const drag = Math.pow(0.985, dt / 16.667);
+          drop.vx *= drag;
+          drop.vy *= drag;
+
+          const alpha = 0.62 * Math.min(1, drop.life / (drop.maxLife * 0.6));
+          ctx.fillStyle = rgba(drop.color, alpha);
+          ctx.beginPath();
+          ctx.ellipse(
+            drop.x,
+            drop.y,
+            drop.r,
+            drop.r * 0.72,
+            Math.atan2(drop.vy, drop.vx),
+            0,
+            TAU,
+          );
+          ctx.fill();
+        }
+      };
+
+      // ---------- Pincel automático ----------
+
+      let autoGesture: AutoGesture | null = null;
+      let autoPrevious: { x: number; y: number; width: number; color: RGB } | null = null;
+      let autoProgress = 0;
+      let autoPauseUntil = 0;
+      let lastAutoPath = -1;
+
+      const startAutoGesture = (now: number) => {
+        const paths = width <= 960 ? AUTO_PATHS_NARROW : AUTO_PATHS;
+        let pathIndex = Math.floor(Math.random() * paths.length);
+        if (pathIndex === lastAutoPath) {
+          pathIndex = (pathIndex + 1) % paths.length;
+        }
+        lastAutoPath = pathIndex;
+
+        const points = paths[pathIndex].map(([x, y]) => ({
+          x: x * width,
+          y: y * height,
+        }));
+
+        autoGesture = {
+          points,
+          duration: 1900 + Math.random() * 700,
+          colorT: 0.02 + Math.random() * 0.26,
+          seed: Math.random() * 10,
+        };
+        autoPrevious = null;
+        autoProgress = 0;
+        autoPauseUntil = now + autoGesture.duration + 900 + Math.random() * 700;
+      };
+
+      const paintAuto = (dt: number, now: number) => {
+        if (!autoGesture) return;
+
+        autoProgress = Math.min(1, autoProgress + dt / autoGesture.duration);
+        const eased = easeInOutCubic(autoProgress);
+        const point = cubicPoint(autoGesture.points, eased);
+        const taper = Math.pow(Math.sin(Math.PI * autoProgress), 0.55);
+        const wobble = 0.88 + 0.12 * Math.sin(eased * 14 + autoGesture.seed);
+        const narrow = width <= 960;
+        const brushWidth = maxBrush() * (narrow ? 0.85 : 0.52) * taper * wobble;
+        const color = samplePalette(
+          clamp(
+            autoGesture.colorT + 0.14 * Math.sin(eased * Math.PI * 2 + autoGesture.seed),
+            0,
+            1,
+          ),
+        );
+
+        if (autoPrevious) {
+          paintSegment(
+            autoPrevious.x,
+            autoPrevious.y,
+            autoPrevious.width,
+            autoPrevious.color,
+            point.x,
+            point.y,
+            brushWidth,
+            color,
+            narrow ? 0.62 : 0.55,
+          );
+
+          const speed =
+            Math.hypot(point.x - autoPrevious.x, point.y - autoPrevious.y) / dt;
+          if (speed > 0.8 && now - lastSpawn > 120 && Math.random() < 0.12) {
+            spawnDroplets(
+              point.x,
+              point.y,
+              (point.x - autoPrevious.x) / dt,
+              (point.y - autoPrevious.y) / dt,
+              color,
+              1,
+            );
+            lastSpawn = now;
+          }
+        }
+
+        autoPrevious = { x: point.x, y: point.y, width: brushWidth, color };
+
+        if (autoProgress >= 1) {
+          autoGesture = null;
+          autoPrevious = null;
+          autoPauseUntil = now + 900 + Math.random() * 700;
+        }
+      };
+
+      // ---------- Entrada do ponteiro ----------
+
+      const onPointerMove = (event: PointerEvent) => {
+        // No toque, o dedo rola a página; o pincel automático cuida da animação.
+        if (event.pointerType === 'touch') return;
+
+        const coalesced = event.getCoalescedEvents?.();
+        const last = coalesced && coalesced.length ? coalesced[coalesced.length - 1] : event;
+        const x = last.clientX - rect.left;
+        const y = last.clientY - rect.top;
+        const now = performance.now();
+
+        // Um salto grande (mouse entrando na página, troca de dispositivo)
+        // não deve virar uma linha reta atravessando o hero.
+        if (brush.active && Math.hypot(x - brush.x, y - brush.y) > TELEPORT_DISTANCE) {
+          releaseBrush();
+        }
+
+        if (!brush.active) {
+          brush.x = x;
+          brush.y = y;
+          brush.width = 0;
+          brush.dx = 1;
+          brush.dy = 0;
+          brush.color = samplePalette(0.08 + Math.random() * 0.18);
+          brush.active = true;
+          strokeDistance = 0;
+          pointerSpeed = 0;
+          pointerX = x;
+          pointerY = y;
+          pointerAt = now;
+        } else {
+          const eventDt = Math.max(1, now - pointerAt);
+          const eventSpeed = Math.hypot(x - pointerX, y - pointerY) / eventDt;
+          pointerSpeed = pointerSpeed * 0.62 + eventSpeed * 0.38;
+          pointerX = x;
+          pointerY = y;
+          pointerAt = now;
+        }
+
+        targetX = x;
+        targetY = y;
+        lastPointer = now;
+
+        if (autoGesture) {
+          autoGesture = null;
+          autoPrevious = null;
+          autoPauseUntil = lastPointer + IDLE_BEFORE_AUTO;
+        }
+      };
+
+      hero.addEventListener('pointermove', onPointerMove, { passive: true });
+
+      hero.addEventListener('pointerleave', () => {
+        releaseBrush();
+        lastPointer = performance.now();
+      });
+
+      // ---------- Loop ----------
+
+      let visible = true;
+      new IntersectionObserver(([entry]) => {
+        visible = entry.isIntersecting;
+      }).observe(hero);
+
+      document.addEventListener('visibilitychange', () => {
+        lastPointer = performance.now();
+        if (document.hidden) releaseBrush();
+      });
+
+      motionQuery.addEventListener('change', () => {
+        enabled = !motionQuery.matches;
+
+        if (!enabled) {
+          brush.active = false;
+          autoGesture = null;
+          autoPrevious = null;
+          droplets.length = 0;
+          ctx.clearRect(0, 0, width, height);
+        }
+      });
+
+      let lastFrame = performance.now();
+
+      const loop = (now: number) => {
+        requestAnimationFrame(loop);
+
+        if (!enabled || !visible || document.hidden) {
+          lastFrame = now;
+          return;
+        }
+
+        const dt = Math.min(50, Math.max(1, now - lastFrame));
+        lastFrame = now;
+
+        // Um resize limpa o canvas; zera o estado para não emendar um traço
+        // antigo nas coordenadas novas.
+        if (resized) {
+          resized = false;
+          brush.active = false;
+          autoGesture = null;
+          autoPrevious = null;
+          droplets.length = 0;
+        }
+
+        // O rastro some devagar; a opacidade é independente da taxa de quadros.
+        // Durante o gesto automático o fade é mais lento para o traço inteiro
+        // aparecer; depois ele volta ao ritmo normal e limpa a tela.
+        const fadeBase = autoGesture ? 0.995 : 0.985;
+        const fade = 1 - Math.pow(fadeBase, dt / 16.667);
+        ctx.globalCompositeOperation = 'destination-out';
+        ctx.globalAlpha = fade;
+        ctx.fillStyle = '#000';
+        ctx.fillRect(0, 0, width, height);
+        ctx.globalCompositeOperation = 'source-over';
+        ctx.globalAlpha = 1;
+
+        // Se o mouse ficou parado, o pincel "sai do papel" e deixa uma ponta.
+        if (brush.active && now - lastPointer > IDLE_BEFORE_RELEASE) {
+          releaseBrush();
+        }
+
+        if (brush.active) {
+          const previousX = brush.x;
+          const previousY = brush.y;
+          const previousWidth = brush.width;
+          const previousColor = brush.color;
+
+          const follow = 1 - Math.pow(0.72, dt / 16.667);
+          brush.x += (targetX - brush.x) * follow;
+          brush.y += (targetY - brush.y) * follow;
+
+          const moved = Math.hypot(brush.x - previousX, brush.y - previousY);
+          const speed = moved / dt;
+          const speedT = clamp((pointerSpeed - 0.12) / 1.8, 0, 1);
+          strokeDistance += moved;
+          // Entrada do traço: a tinta "encosta" no papel e abre em leque.
+          const startTaper = Math.pow(clamp(strokeDistance / 28, 0, 1), 0.6);
+          const wantedWidth = maxBrush() * (1 - 0.8 * speedT) * startTaper;
+          const widthFollow = 1 - Math.pow(0.82, dt / 16.667);
+          brush.width += (wantedWidth - brush.width) * widthFollow;
+
+          if (moved > 0.001) {
+            brush.dx = (brush.x - previousX) / moved;
+            brush.dy = (brush.y - previousY) / moved;
+          }
+
+          const wantedColor = samplePalette(0.04 + speedT * 0.96);
+          const colorFollow = 1 - Math.pow(0.88, dt / 16.667);
+          brush.color = mixColor(brush.color, wantedColor, colorFollow);
+
+          if (moved > 0.25) {
+            paintSegment(
+              previousX,
+              previousY,
+              previousWidth,
+              previousColor,
+              brush.x,
+              brush.y,
+              brush.width,
+              brush.color,
+            );
+
+            if (speed > 1.1 && now - lastSpawn > 90 && Math.random() < 0.32) {
+              spawnDroplets(
+                brush.x,
+                brush.y,
+                (brush.x - previousX) / dt,
+                (brush.y - previousY) / dt,
+                brush.color,
+                1 + (Math.random() < 0.25 ? 1 : 0),
+              );
+              lastSpawn = now;
+            }
+          }
+        } else if (
+          now - lastPointer > IDLE_BEFORE_AUTO &&
+          !autoGesture &&
+          now >= autoPauseUntil
+        ) {
+          startAutoGesture(now);
+        }
+
+        if (autoGesture) {
+          paintAuto(dt, now);
+        }
+
+        updateDroplets(dt);
+      };
+
+      requestAnimationFrame(loop);
+    }
   }
 </script>
