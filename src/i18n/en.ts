@@ -34,10 +34,7 @@ export const en: Dictionary = {
     other: 'Português',
     otherShort: 'PT',
     menu: 'Menu',
-    preview: 'Preview',
     github: 'GitHub',
-    download: 'Download',
-    cv: 'Download CV',
   },
 
   hero: {

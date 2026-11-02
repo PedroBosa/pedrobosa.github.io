@@ -158,8 +158,8 @@
   opacity: 1;
 }
 
-/* CTA de CV dentro do menu mobile (no desktop ele já aparece em .hdr-act). */
-.hdr-nav__cv {
+/* CTA do GitHub dentro do menu mobile (no desktop ele já aparece em .hdr-act). */
+.hdr-nav__cta {
   display: none;
 }
 
@@ -294,7 +294,7 @@
     background: rgba(14, 27, 61, 0.07);
   }
 
-  .hdr-nav__cv {
+  .hdr-nav__cta {
     display: block;
     margin-top: 0.35rem;
     background: var(--accent);
@@ -302,7 +302,7 @@
     text-align: center;
   }
 
-  .hdr-nav__cv:hover {
+  .hdr-nav__cta:hover {
     background: var(--ink);
   }
 }

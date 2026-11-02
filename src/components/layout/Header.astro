@@ -11,7 +11,6 @@ const { lang } = Astro.props;
 const d = t(lang);
 const other = altLang(lang);
 const home = routes[lang];
-const cvUrl = LINKS.cv[lang];
 ---
 <header class="hdr" id="site-header">
   <div class="hdr-in">
@@ -19,14 +18,11 @@ const cvUrl = LINKS.cv[lang];
 
     <nav class="hdr-nav" id="site-nav" aria-label={d.a11y.mainNav} data-menu>
       {NAV_SECTIONS.map((id) => <a href={`${home}#${id}`}>{d.nav[id]}</a>)}
-      <a class="hdr-nav__cv" href={cvUrl} download>{d.header.cv}</a>
+      <a class="hdr-nav__cta" href={LINKS.repo} target="_blank" rel="noopener noreferrer">{d.header.github}</a>
     </nav>
 
     <div class="hdr-act">
-      <a class="sbtn" href={`${home}#projects`}>{d.header.preview}</a>
-      <a class="sbtn" href={LINKS.repo} target="_blank" rel="noopener noreferrer">{d.header.github}</a>
-      <a class="sbtn" href={LINKS.release} target="_blank" rel="noopener noreferrer">{d.header.download}</a>
-      <a class="sbtn sbtn--fill" href={cvUrl} download>{d.header.cv}</a>
+      <a class="sbtn sbtn--fill" href={LINKS.repo} target="_blank" rel="noopener noreferrer">{d.header.github}</a>
     </div>
 
     <a

@@ -32,10 +32,7 @@ export const pt = {
     other: 'English',
     otherShort: 'EN',
     menu: 'Menu',
-    preview: 'Prévia',
     github: 'GitHub',
-    download: 'Download',
-    cv: 'Baixar CV',
   },
 
   hero: {
