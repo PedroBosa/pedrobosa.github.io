@@ -17,7 +17,6 @@ const demo = {
   poster: '/projects/radialflow-demo-poster.png',
   mp4: '/projects/radialflow-demo.mp4',
   webm: '/projects/radialflow-demo.webm',
-  gif: '/projects/radialflow-demo.gif',
 };
 ---
 <section class="sec sec--dark" id="projects">
@@ -51,7 +50,8 @@ const demo = {
         >
           <source src={demo.mp4} type="video/mp4" />
           <source src={demo.webm} type="video/webm" />
-          <img src={demo.gif} alt={featured.demoAlt} width="760" height="500" loading="lazy" />
+          {/* Só aparece em navegador sem suporte a <video>; o poster basta. */}
+          <img src={demo.poster} alt={featured.demoAlt} width="760" height="500" loading="lazy" />
         </video>
         <img
           class="feat-poster"

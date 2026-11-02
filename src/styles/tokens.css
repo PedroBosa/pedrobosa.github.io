@@ -9,8 +9,11 @@
   --accent: #e0262d;
   --accent-t: #b3141b; /* acento para texto sobre fundo claro (contraste AA) */
 
-  /* Tipografia */
-  --display: 'Archivo', system-ui, sans-serif;
+  /* Tipografia.
+     O fallback do display é uma grotesca condensada: é o que fica no ar
+     enquanto a Archivo carrega, e é a mais próxima do condensado que o hero
+     usa (ver fonts.css). */
+  --display: 'Archivo', 'Archivo Narrow', 'Arial Narrow', system-ui, sans-serif;
   --serif: 'Source Serif 4', Georgia, serif;
 
   /* Espaçamento lateral e curva de animação */

@@ -5,12 +5,12 @@ Saída 100% estática: nenhum framework JavaScript roda no navegador.
 
 - Cabeçalho flutuante que vira uma "pílula" com menu ao rolar a página
 - Menu mobile acessível (`aria-expanded`, `aria-controls`, Escape e fechamento ao clicar)
-- Hero com tinta de verdade: arraste com o mouse para desenhar pinceladas que ficam na tela
+- Hero com tinta de verdade: arraste com o mouse para desenhar pinceladas que ficam na tela (duplo clique limpa)
 - Versões `/` (PT-BR) e `/en/` (EN), com `hreflang`, canonical e lembrança do idioma escolhido
 - Demonstração do RadialFlow em vídeo, com poster estático e respeito a `prefers-reduced-motion`
 - Currículo em PDF (PT e EN), e-mail, GitHub e LinkedIn em destaque
 - SEO completo: Open Graph, Twitter Card, JSON-LD `Person`, sitemap, `robots.txt` e página 404
-- Fontes self-hosted em WOFF2, subset Latin, com preload e `font-display: optional`
+- Fontes self-hosted em WOFF2, subset Latin, com preload e `font-display: swap` (fallback condensado para o hero não desmontar durante a troca)
 - Respeita `prefers-reduced-motion`, tem link "pular para o conteúdo" e foco visível
 - Deploy automático no GitHub Pages
 
