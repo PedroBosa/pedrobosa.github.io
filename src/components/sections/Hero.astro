@@ -72,7 +72,6 @@ const [firstName, lastName] = PROFILE.shortName.split(' ');
       const MIN_STEP = 1;
       const MAX_POINTS = 700;
       const MAX_STROKES = 80;
-      const CAP_STEPS = 14;
 
       // Largura do pincel, proporcional à tela.
       const BASE_RATIO = 0.034;
@@ -81,11 +80,6 @@ const [firstName, lastName] = PROFILE.shortName.split(' ');
 
       const clamp = (value: number, min: number, max: number) =>
         Math.min(max, Math.max(min, value));
-
-      const smoothstep = (edge0: number, edge1: number, x: number) => {
-        const t = clamp((x - edge0) / (edge1 - edge0), 0, 1);
-        return t * t * (3 - 2 * t);
-      };
 
       const ink = getComputedStyle(hero).getPropertyValue('--ink').trim() || '#0e1b3d';
 
@@ -105,16 +99,15 @@ const [firstName, lastName] = PROFILE.shortName.split(' ');
       const baseWidthAt = (minDim: number) =>
         clamp(minDim * BASE_RATIO, BASE_MIN, BASE_MAX);
 
-      /** Normalizado → pixels, com um leve alisamento do tremor do mouse. */
+      /**
+       * Normalizado → pixels, com um leve alisamento do tremor do mouse.
+       * A largura é a mesma do começo ao fim: o traço entra cheio e redondo,
+       * como um pincel encostando no papel.
+       */
       const toPixels = (points: Point[]): Pixel[] => {
         const count = points.length;
         const minDim = Math.min(width, height);
-        const base = baseWidthAt(minDim);
         const out: Pixel[] = [];
-
-        let travelled = 0;
-        let previousX = 0;
-        let previousY = 0;
 
         for (let i = 0; i < count; i++) {
           const point = points[i];
@@ -128,101 +121,43 @@ const [firstName, lastName] = PROFILE.shortName.split(' ');
             y = (before.y + point.y * 2 + after.y) * 0.25 * height;
           }
 
-          if (i > 0) travelled += Math.hypot(x - previousX, y - previousY);
-          previousX = x;
-          previousY = y;
-
-          // Entrada curta: a tinta encosta no papel e abre em leque.
-          out.push({ x, y, w: point.w * minDim * smoothstep(0, base, travelled) });
+          out.push({ x, y, w: point.w * minDim });
         }
 
         return out;
       };
 
       /**
-       * Um polígono só: borda esquerda na ida, arco na frente, borda direita na
-       * volta e arco atrás. Fechado assim, não existe emenda entre segmentos.
+       * Desenha o rastro como uma sequência de segmentos de ponta redonda.
+       *
+       * A alternativa — um polígono único com as bordas deslocadas — falha
+       * justamente onde a mão muda de direção: as duas bordas se cruzam e
+       * aparece um entalhe no lado de fora da curva. Com ponta redonda, cada
+       * emenda já é um arco e nenhum canto consegue quebrar o traço.
        */
-      const tracePath = (target: CanvasRenderingContext2D, px: Pixel[], lift: boolean) => {
-        const count = px.length;
-        if (count < 2) return false;
-
-        const nx: number[] = [];
-        const ny: number[] = [];
-
-        for (let i = 0; i < count; i++) {
-          const before = px[Math.max(0, i - 1)];
-          const after = px[Math.min(count - 1, i + 1)];
-          const tx = after.x - before.x;
-          const ty = after.y - before.y;
-          const length = Math.hypot(tx, ty) || 1;
-          nx.push(-ty / length);
-          ny.push(tx / length);
-        }
-
-        const angleAt = (i: number) => {
-          const before = px[Math.max(0, i - 1)];
-          const after = px[Math.min(count - 1, i + 1)];
-          return Math.atan2(after.y - before.y, after.x - before.x);
-        };
-
-        const half = (i: number) => Math.max(0, px[i].w / 2);
-
-        target.beginPath();
-
-        for (let i = 0; i < count; i++) {
-          const h = half(i);
-          const x = px[i].x + nx[i] * h;
-          const y = px[i].y + ny[i] * h;
-          if (i === 0) target.moveTo(x, y);
-          else target.lineTo(x, y);
-        }
-
-        // Frente: redonda enquanto o pincel está no papel. Depois de solto, a
-        // cauda já afina sozinha e dispensa o arco.
-        if (!lift) {
-          const head = count - 1;
-          const r = half(head);
-          const angle = angleAt(head);
-          for (let k = 1; k <= CAP_STEPS; k++) {
-            const theta = angle + Math.PI / 2 - (Math.PI * k) / CAP_STEPS;
-            target.lineTo(px[head].x + Math.cos(theta) * r, px[head].y + Math.sin(theta) * r);
-          }
-        }
-
-        for (let i = count - 1; i >= 0; i--) {
-          const h = half(i);
-          target.lineTo(px[i].x - nx[i] * h, px[i].y - ny[i] * h);
-        }
-
-        // Trás: sempre redonda, é onde o pincel encostou.
-        {
-          const r = half(0);
-          const angle = angleAt(0);
-          for (let k = 1; k <= CAP_STEPS; k++) {
-            const theta = angle - Math.PI / 2 - (Math.PI * k) / CAP_STEPS;
-            target.lineTo(px[0].x + Math.cos(theta) * r, px[0].y + Math.sin(theta) * r);
-          }
-        }
-
-        target.closePath();
-        return true;
-      };
-
-      const paint = (
-        target: CanvasRenderingContext2D,
-        points: Point[],
-        lift: boolean,
-      ) => {
+      const paint = (target: CanvasRenderingContext2D, points: Point[]) => {
         if (points.length < 2) return;
-        target.fillStyle = ink;
-        if (tracePath(target, toPixels(points), lift)) target.fill();
+
+        const px = toPixels(points);
+        target.strokeStyle = ink;
+        target.lineCap = 'round';
+        target.lineJoin = 'round';
+
+        for (let i = 1; i < px.length; i++) {
+          const from = px[i - 1];
+          const to = px[i];
+          target.lineWidth = Math.max(0.5, (from.w + to.w) / 2);
+          target.beginPath();
+          target.moveTo(from.x, from.y);
+          target.lineTo(to.x, to.y);
+          target.stroke();
+        }
       };
 
       const render = () => {
         ctx.clearRect(0, 0, width, height);
         ctx.drawImage(settled, 0, 0, width, height);
-        if (live) paint(ctx, live, false);
+        if (live) paint(ctx, live);
       };
 
       // Um desenho por quadro, mesmo com vários eventos de ponteiro.
@@ -262,7 +197,7 @@ const [firstName, lastName] = PROFILE.shortName.split(' ');
 
         // A tinta já seca é repintada no tamanho novo: o desenho sobrevive.
         settledCtx.clearRect(0, 0, width, height);
-        for (const stroke of strokes) paint(settledCtx, stroke, true);
+        for (const stroke of strokes) paint(settledCtx, stroke);
 
         render();
       };
@@ -314,9 +249,10 @@ const [firstName, lastName] = PROFILE.shortName.split(' ');
         speed = speed * 0.6 + (distance / elapsed) * 0.4;
         lastAt = now;
 
-        // Devagar engrossa, rápido afina — a pressão que a mão não tem.
+        // Devagar engrossa, rápido afina — mas de leve, para o traço não
+        // mudar de espessura de um jeito que não corresponde à mão.
         const speedT = clamp((speed - 0.15) / 2.2, 0, 1);
-        const wanted = (baseWidthAt(minDim) * (1 - 0.45 * speedT)) / minDim;
+        const wanted = (baseWidthAt(minDim) * (1 - 0.28 * speedT)) / minDim;
         const next = last.w + (wanted - last.w) * 0.35;
 
         live.push({ x: point.x, y: point.y, w: next });
@@ -333,7 +269,8 @@ const [firstName, lastName] = PROFILE.shortName.split(' ');
         speed = 0;
         hero.classList.remove('is-inking');
 
-        // Ao soltar, a ponta afina: o pincel saindo do papel.
+        // Ao soltar, a ponta fecha logo. Antes ela esticava um rabicho de
+        // ~40px além de onde a mão parou, o que não correspondia ao gesto.
         if (points.length >= 2) {
           const minDim = Math.min(width, height);
           const base = baseWidthAt(minDim);
@@ -346,9 +283,9 @@ const [firstName, lastName] = PROFILE.shortName.split(' ');
           dx /= length;
           dy /= length;
 
-          const reach = base * 1.4;
-          for (let step = 1; step <= 3; step++) {
-            const t = step / 3;
+          const reach = base * 0.4;
+          for (let step = 1; step <= 2; step++) {
+            const t = step / 2;
             const fade = (1 - t) * (1 - t);
             points.push({
               x: head.x + (dx * reach * t) / width,
@@ -357,7 +294,7 @@ const [firstName, lastName] = PROFILE.shortName.split(' ');
             });
           }
 
-          paint(settledCtx, points, true);
+          paint(settledCtx, points);
           if (strokes.length >= MAX_STROKES) strokes.shift();
           strokes.push(points);
         }
