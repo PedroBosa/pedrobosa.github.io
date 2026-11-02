@@ -38,56 +38,46 @@ const [firstName, lastName] = PROFILE.shortName.split(' ');
 
 <script>
   /**
-   * Traço de pincel do hero.
+   * Tinta do hero.
    *
-   * Um traço só, uma cor só. O que faz parecer pincel aqui é apenas a
-   * geometria: a linha afina nas duas pontas, engrossa quando a mão vai
-   * devagar e a cauda se desfaz como tinta secando. Sem cerdas, sem
-   * sangramento, sem respingo — a textura anterior ficava realista demais
-   * para o resto da página, que é editorial e minimalista.
+   * Segure o botão e arraste para desenhar. Cada pincelada **fica** na tela
+   * até a página ser recarregada — nada desaparece.
+   *
+   * O traço não tem textura: o que faz parecer pincel é a forma. A largura
+   * acompanha a mão (devagar engrossa, rápido afina), a entrada é arredondada
+   * e, ao soltar, a ponta afina como um pincel saindo do papel. Uma cor só,
+   * vinda do token `--ink`.
    *
    * Como funciona:
-   * - o ponteiro alimenta um rastro de pontos, cada um com largura e horário;
-   * - a cada quadro o rastro inteiro é redesenhado como UM polígono liso,
-   *   numa passada só — sem emendas entre segmentos e sem empilhar alfa;
-   * - a tela é apagada um pouco por quadro, então o que sai do rastro evapora;
-   * - parado o mouse, um pincel automático desenha gestos longos e calmos.
+   * - os traços são guardados em coordenadas normalizadas (0 a 1), então
+   *   sobrevivem ao redimensionamento da janela;
+   * - a tinta "seca" fica numa camada própria; a cada quadro só o traço em
+   *   andamento é redesenhado por cima, como um polígono único.
    *
-   * Desligado em prefers-reduced-motion. Sem dependências.
+   * Sem dependências e sem animação própria: só desenha quando a pessoa desenha.
    */
   const hero = document.getElementById('home');
   const canvas = hero?.querySelector<HTMLCanvasElement>('canvas.paint');
-  const reduceMotion = matchMedia('(prefers-reduced-motion: reduce)');
 
   if (hero && canvas) {
     const ctx = canvas.getContext('2d');
+    const settled = document.createElement('canvas');
+    const settledCtx = settled.getContext('2d');
 
-    if (ctx) {
-      type RGB = [number, number, number];
-      type Point = { x: number; y: number };
-      type TrailPoint = { x: number; y: number; w: number; t: number };
-      type AutoGesture = {
-        control: Point[];
-        duration: number;
-        startedAt: number;
-        last: Point | null;
-      };
+    if (ctx && settledCtx) {
+      /** Ponto normalizado: `x`/`y` de 0 a 1 e `w` como fração do menor lado. */
+      type Point = { x: number; y: number; w: number };
+      type Pixel = { x: number; y: number; w: number };
 
-      const IDLE_BEFORE_AUTO = 2000;
-      const POINTER_TRAIL_MS = 950;
-      const MAX_POINTS = 260;
-      // Por quadro a 60fps. O fade não desenha nada: ele só apaga o que ficou
-      // para trás. Como o rastro é redesenhado a cada quadro, a parte dentro
-      // dele continua cheia e só a cauda se desfaz.
-      const FADE_LIVE = 0.968;
-      const FADE_AUTO = 0.975;
-      const MIN_STEP = 1.4;
-      // Um salto maior que isto não é gesto: é o cursor entrando na página ou
-      // trocando de dispositivo. Sem cortar, o traço viraria uma linha reta
-      // atravessando o hero.
-      const TELEPORT_DISTANCE = 260;
+      const MIN_STEP = 1;
+      const MAX_POINTS = 700;
+      const MAX_STROKES = 80;
+      const CAP_STEPS = 14;
 
-      const INK_FALLBACK: RGB = [14, 27, 61];
+      // Largura do pincel, proporcional à tela.
+      const BASE_RATIO = 0.034;
+      const BASE_MIN = 14;
+      const BASE_MAX = 34;
 
       const clamp = (value: number, min: number, max: number) =>
         Math.min(max, Math.max(min, value));
@@ -97,114 +87,160 @@ const [firstName, lastName] = PROFILE.shortName.split(' ');
         return t * t * (3 - 2 * t);
       };
 
-      const easeInOutCubic = (t: number) =>
-        t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2;
-
-      const rgba = (color: RGB, alpha: number) =>
-        `rgba(${color[0] | 0}, ${color[1] | 0}, ${color[2] | 0}, ${alpha})`;
-
-      /** A cor da tinta vem do token `--ink`, para não repetir o valor aqui. */
-      const readInk = (): RGB => {
-        const raw = getComputedStyle(hero).getPropertyValue('--ink').trim();
-
-        const hex = raw.match(/^#([0-9a-f]{6})$/i);
-        if (hex) {
-          const value = parseInt(hex[1], 16);
-          return [(value >> 16) & 255, (value >> 8) & 255, value & 255];
-        }
-
-        const rgb = raw.match(/rgba?\(\s*(\d+)[,\s]+(\d+)[,\s]+(\d+)/i);
-        if (rgb) return [+rgb[1], +rgb[2], +rgb[3]];
-
-        return INK_FALLBACK;
-      };
-
-      const ink = readInk();
-
-      const cubicPoint = (points: Point[], t: number): Point => {
-        const [a, b, c, d] = points;
-        const u = 1 - t;
-        return {
-          x: u * u * u * a.x + 3 * u * u * t * b.x + 3 * u * t * t * c.x + t * t * t * d.x,
-          y: u * u * u * a.y + 3 * u * u * t * b.y + 3 * u * t * t * c.y + t * t * t * d.y,
-        };
-      };
-
-      // Gestos automáticos em coordenadas normalizadas (x, y de 0 a 1).
-      // São varreduras longas e rasas nos espaços vazios do hero: perto da
-      // base, subindo pela margem e cruzando o topo. Nada de rabisco.
-      const AUTO_WIDE: Array<Array<[number, number]>> = [
-        [[-0.06, 0.88], [0.28, 0.79], [0.64, 0.97], [1.03, 0.83]],
-        [[-0.04, 0.66], [0.07, 0.50], [0.01, 0.34], [0.13, 0.19]],
-        [[0.58, 0.94], [0.70, 0.89], [0.82, 0.96], [0.98, 0.90]],
-        [[-0.05, 0.30], [0.14, 0.24], [0.26, 0.12], [0.42, 0.06]],
-      ];
-
-      // No celular o texto ocupa a largura toda; os gestos ficam mais curtos
-      // e mais discretos, atrás do nome.
-      const AUTO_NARROW: Array<Array<[number, number]>> = [
-        [[-0.05, 0.30], [0.20, 0.26], [0.34, 0.33], [0.62, 0.27]],
-        [[-0.04, 0.52], [0.18, 0.46], [0.36, 0.54], [0.60, 0.47]],
-        [[0.02, 0.80], [0.22, 0.74], [0.40, 0.82], [0.64, 0.75]],
-      ];
-
-      // ---------- Estado ----------
-
-      const trail: TrailPoint[] = [];
-      let trailLife = POINTER_TRAIL_MS;
-
-      // Buffers reaproveitados a cada quadro: evita alocar arrays no loop.
-      const bufferSize = MAX_POINTS + 4;
-      const sx = new Float32Array(bufferSize);
-      const sy = new Float32Array(bufferSize);
-      const sw = new Float32Array(bufferSize);
+      const ink = getComputedStyle(hero).getPropertyValue('--ink').trim() || '#0e1b3d';
 
       let width = 0;
       let height = 0;
       let dpr = 1;
-      let resized = true;
-      let enabled = !reduceMotion.matches;
-      // Opacidade estimada do que restou no canvas (0 a 1). É o que decide
-      // quando vale a pena limpar de verdade: o fade exponencial nunca chega
-      // a zero e deixava um resíduo de 1/255 que sujava o fundo com o tempo.
-      let inkLeft = 0;
-      // Ritmo de desaparecimento do traço que está na tela no momento.
-      let fadeRate = FADE_LIVE;
 
-      // Ponteiro
-      let targetX = 0;
-      let targetY = 0;
-      let brushX = 0;
-      let brushY = 0;
-      let brushReady = false;
-      let pointerMovedAt = 0;
-      let lastMoveX = 0;
-      let lastMoveY = 0;
-      let lastMoveAt = 0;
+      /** Traços concluídos, em coordenadas normalizadas. */
+      const strokes: Point[][] = [];
+      /** Traço em andamento (ainda no pincel). */
+      let live: Point[] | null = null;
+
+      let lastAt = 0;
       let speed = 0;
+      let scheduled = false;
 
-      // Gesto automático
-      let auto: AutoGesture | null = null;
-      // Espera a animação de entrada do nome terminar antes da primeira marca.
-      let nextAutoAt = performance.now() + 1200;
-      let lastPathIndex = -1;
+      const baseWidthAt = (minDim: number) =>
+        clamp(minDim * BASE_RATIO, BASE_MIN, BASE_MAX);
 
-      // Mesma grossura do rabisco do Contato (~9px de traço), para o hero
-      // falar a mesma língua do resto da página.
-      const baseWidth = () => clamp(Math.min(width, height) * 0.014, 7, 13);
+      /** Normalizado → pixels, com um leve alisamento do tremor do mouse. */
+      const toPixels = (points: Point[]): Pixel[] => {
+        const count = points.length;
+        const minDim = Math.min(width, height);
+        const base = baseWidthAt(minDim);
+        const out: Pixel[] = [];
 
-      // ---------- Canvas ----------
+        let travelled = 0;
+        let previousX = 0;
+        let previousY = 0;
 
-      const clearCanvas = () => {
-        ctx.clearRect(0, 0, width, height);
-        inkLeft = 0;
+        for (let i = 0; i < count; i++) {
+          const point = points[i];
+          let x = point.x * width;
+          let y = point.y * height;
+
+          if (i > 0 && i < count - 1) {
+            const before = points[i - 1];
+            const after = points[i + 1];
+            x = (before.x + point.x * 2 + after.x) * 0.25 * width;
+            y = (before.y + point.y * 2 + after.y) * 0.25 * height;
+          }
+
+          if (i > 0) travelled += Math.hypot(x - previousX, y - previousY);
+          previousX = x;
+          previousY = y;
+
+          // Entrada curta: a tinta encosta no papel e abre em leque.
+          out.push({ x, y, w: point.w * minDim * smoothstep(0, base, travelled) });
+        }
+
+        return out;
       };
+
+      /**
+       * Um polígono só: borda esquerda na ida, arco na frente, borda direita na
+       * volta e arco atrás. Fechado assim, não existe emenda entre segmentos.
+       */
+      const tracePath = (target: CanvasRenderingContext2D, px: Pixel[], lift: boolean) => {
+        const count = px.length;
+        if (count < 2) return false;
+
+        const nx: number[] = [];
+        const ny: number[] = [];
+
+        for (let i = 0; i < count; i++) {
+          const before = px[Math.max(0, i - 1)];
+          const after = px[Math.min(count - 1, i + 1)];
+          const tx = after.x - before.x;
+          const ty = after.y - before.y;
+          const length = Math.hypot(tx, ty) || 1;
+          nx.push(-ty / length);
+          ny.push(tx / length);
+        }
+
+        const angleAt = (i: number) => {
+          const before = px[Math.max(0, i - 1)];
+          const after = px[Math.min(count - 1, i + 1)];
+          return Math.atan2(after.y - before.y, after.x - before.x);
+        };
+
+        const half = (i: number) => Math.max(0, px[i].w / 2);
+
+        target.beginPath();
+
+        for (let i = 0; i < count; i++) {
+          const h = half(i);
+          const x = px[i].x + nx[i] * h;
+          const y = px[i].y + ny[i] * h;
+          if (i === 0) target.moveTo(x, y);
+          else target.lineTo(x, y);
+        }
+
+        // Frente: redonda enquanto o pincel está no papel. Depois de solto, a
+        // cauda já afina sozinha e dispensa o arco.
+        if (!lift) {
+          const head = count - 1;
+          const r = half(head);
+          const angle = angleAt(head);
+          for (let k = 1; k <= CAP_STEPS; k++) {
+            const theta = angle + Math.PI / 2 - (Math.PI * k) / CAP_STEPS;
+            target.lineTo(px[head].x + Math.cos(theta) * r, px[head].y + Math.sin(theta) * r);
+          }
+        }
+
+        for (let i = count - 1; i >= 0; i--) {
+          const h = half(i);
+          target.lineTo(px[i].x - nx[i] * h, px[i].y - ny[i] * h);
+        }
+
+        // Trás: sempre redonda, é onde o pincel encostou.
+        {
+          const r = half(0);
+          const angle = angleAt(0);
+          for (let k = 1; k <= CAP_STEPS; k++) {
+            const theta = angle - Math.PI / 2 - (Math.PI * k) / CAP_STEPS;
+            target.lineTo(px[0].x + Math.cos(theta) * r, px[0].y + Math.sin(theta) * r);
+          }
+        }
+
+        target.closePath();
+        return true;
+      };
+
+      const paint = (
+        target: CanvasRenderingContext2D,
+        points: Point[],
+        lift: boolean,
+      ) => {
+        if (points.length < 2) return;
+        target.fillStyle = ink;
+        if (tracePath(target, toPixels(points), lift)) target.fill();
+      };
+
+      const render = () => {
+        ctx.clearRect(0, 0, width, height);
+        ctx.drawImage(settled, 0, 0, width, height);
+        if (live) paint(ctx, live, false);
+      };
+
+      // Um desenho por quadro, mesmo com vários eventos de ponteiro.
+      const schedule = () => {
+        if (scheduled) return;
+        scheduled = true;
+        requestAnimationFrame(() => {
+          scheduled = false;
+          render();
+        });
+      };
+
+      // ---------- Redimensionamento ----------
 
       const resize = () => {
         const rect = hero.getBoundingClientRect();
         const nextWidth = Math.max(1, rect.width);
         const nextHeight = Math.max(1, rect.height);
-        // O canvas é só textura: 1,5x em telas grandes já é nítido e poupa GPU.
         const nextDpr = Math.min(
           devicePixelRatio || 1,
           nextWidth * nextHeight > 1_000_000 ? 1.5 : 2,
@@ -215,339 +251,132 @@ const [firstName, lastName] = PROFILE.shortName.split(' ');
         width = nextWidth;
         height = nextHeight;
         dpr = nextDpr;
-        resized = true;
 
         canvas.width = Math.round(width * dpr);
         canvas.height = Math.round(height * dpr);
         ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-      };
 
-      resize();
-      addEventListener('resize', resize);
+        settled.width = canvas.width;
+        settled.height = canvas.height;
+        settledCtx.setTransform(dpr, 0, 0, dpr, 0, 0);
 
-      if ('ResizeObserver' in window) {
-        new ResizeObserver(resize).observe(hero);
-      }
+        // A tinta já seca é repintada no tamanho novo: o desenho sobrevive.
+        settledCtx.clearRect(0, 0, width, height);
+        for (const stroke of strokes) paint(settledCtx, stroke, true);
 
-      // ---------- Rastro ----------
-
-      const trimTrail = (now: number) => {
-        while (trail.length && now - trail[0].t > trailLife) trail.shift();
-        while (trail.length > MAX_POINTS) trail.shift();
-      };
-
-      const pushPoint = (x: number, y: number, w: number, now: number) => {
-        const last = trail[trail.length - 1];
-        if (last && Math.hypot(x - last.x, y - last.y) < MIN_STEP) return;
-        trail.push({ x, y, w, t: now });
-      };
-
-      /**
-       * Desenha o rastro inteiro como um único polígono: lado esquerdo na ida,
-       * arco na ponta e lado direito na volta. Um `fill` só, então as bordas
-       * ficam contínuas e não aparece emenda nem mancha onde os segmentos
-       * se sobrepunham.
-       */
-      const drawTrail = () => {
-        const n = trail.length;
-        if (n < 2) return;
-
-        // Posições suavizadas (média com os vizinhos) para tirar o tremor do
-        // mouse. A ponta fica crua, senão o traço atrasa em relação ao cursor.
-        for (let i = 0; i < n; i++) {
-          const current = trail[i];
-          if (i === 0 || i === n - 1) {
-            sx[i] = current.x;
-            sy[i] = current.y;
-          } else {
-            const previous = trail[i - 1];
-            const next = trail[i + 1];
-            sx[i] = (previous.x + current.x * 2 + next.x) * 0.25;
-            sy[i] = (previous.y + current.y * 2 + next.y) * 0.25;
-          }
-          sw[i] = current.w;
-        }
-
-        // Cauda afilada: o ponto mais antigo perde largura até sumir.
-        for (let i = 0; i < n; i++) {
-          const u = i / (n - 1);
-          sw[i] *= smoothstep(0, 0.25, u);
-        }
-
-        ctx.fillStyle = rgba(ink, 0.92);
-        ctx.beginPath();
-
-        const halfAt = (i: number) => Math.max(0, sw[i] * 0.5);
-        const normalAt = (i: number) => {
-          const before = i > 0 ? i - 1 : i;
-          const after = i < n - 1 ? i + 1 : i;
-          const tx = sx[after] - sx[before];
-          const ty = sy[after] - sy[before];
-          const length = Math.hypot(tx, ty) || 1;
-          return { nx: -ty / length, ny: tx / length };
-        };
-
-        for (let i = 0; i < n; i++) {
-          const { nx, ny } = normalAt(i);
-          const h = halfAt(i);
-          const x = sx[i] + nx * h;
-          const y = sy[i] + ny * h;
-          if (i === 0) ctx.moveTo(x, y);
-          else ctx.lineTo(x, y);
-        }
-
-        // Ponta arredondada: semicírculo de uma borda à outra, passando pela
-        // frente. Entra no mesmo caminho, então recebe um único fill.
-        const head = n - 1;
-        const angle = Math.atan2(
-          sy[head] - sy[head - 1],
-          sx[head] - sx[head - 1],
-        );
-        ctx.arc(
-          sx[head],
-          sy[head],
-          halfAt(head),
-          angle + Math.PI / 2,
-          angle - Math.PI / 2,
-          true,
-        );
-
-        for (let i = n - 1; i >= 0; i--) {
-          const { nx, ny } = normalAt(i);
-          const h = halfAt(i);
-          ctx.lineTo(sx[i] - nx * h, sy[i] - ny * h);
-        }
-
-        ctx.closePath();
-        ctx.fill();
-        inkLeft = 1;
-      };
-
-      // ---------- Pincel automático ----------
-
-      const autoWidth = (progress: number) =>
-        baseWidth() *
-        1.08 *
-        smoothstep(0, 0.04, progress) *
-        (1 - smoothstep(0.70, 1, progress));
-
-      const startAuto = (now: number) => {
-        // Começa sempre de tela limpa. Neste ponto o rastro está vazio e a
-        // tinta anterior já passou pelo menos 2s desaparecendo (abaixo de 1%),
-        // então a limpeza não é percebida — e o canvas não acumula véu.
-        clearCanvas();
-
-        const paths = width <= 960 ? AUTO_NARROW : AUTO_WIDE;
-        let index = Math.floor(Math.random() * paths.length);
-        if (index === lastPathIndex) index = (index + 1) % paths.length;
-        lastPathIndex = index;
-
-        auto = {
-          control: paths[index].map(([x, y]) => ({ x: x * width, y: y * height })),
-          duration: 2200 + Math.random() * 900,
-          startedAt: now,
-          last: null,
-        };
-
-        // Os pontos só precisam sobreviver enquanto o gesto é desenhado. No
-        // fim o rastro é descartado e a tinta passa a apenas desaparecer.
-        trailLife = auto.duration + 600;
-        fadeRate = FADE_AUTO;
-        trail.length = 0;
-      };
-
-      const stepAuto = (now: number) => {
-        if (!auto) return;
-
-        const progress = clamp((now - auto.startedAt) / auto.duration, 0, 1);
-        const point = cubicPoint(auto.control, easeInOutCubic(progress));
-        const brushWidth = autoWidth(progress);
-
-        const gap = auto.last
-          ? Math.hypot(point.x - auto.last.x, point.y - auto.last.y)
-          : Infinity;
-
-        if (gap > MIN_STEP) {
-          trail.push({ x: point.x, y: point.y, w: brushWidth, t: now });
-          auto.last = point;
-        }
-
-        if (progress >= 1) {
-          // Solta o traço: sem rastro para redesenhar, o fade leva a marca
-          // inteira embora de uma vez — some como tinta secando, sem que o
-          // começo seja "comido" antes do fim.
-          auto = null;
-          trail.length = 0;
-          // Solta o traço: a marca inteira passa a desaparecer no ritmo do
-          // ponteiro, mais rápido que durante o desenho.
-          fadeRate = FADE_LIVE;
-          nextAutoAt = now + 2400 + Math.random() * 1400;
-        }
+        render();
       };
 
       // ---------- Entrada do ponteiro ----------
 
-      const onPointerMove = (event: PointerEvent) => {
-        // No toque, o dedo rola a página; o pincel automático cuida da animação.
-        if (event.pointerType === 'touch') return;
-
-        const coalesced = event.getCoalescedEvents?.();
-        const last = coalesced && coalesced.length ? coalesced[coalesced.length - 1] : event;
-
+      const pointAt = (event: PointerEvent) => {
         const rect = hero.getBoundingClientRect();
-        const x = last.clientX - rect.left;
-        const y = last.clientY - rect.top;
+        return {
+          x: clamp((event.clientX - rect.left) / rect.width, 0, 1),
+          y: clamp((event.clientY - rect.top) / rect.height, 0, 1),
+        };
+      };
+
+      const onPointerDown = (event: PointerEvent) => {
+        // Toque rola a página; só mouse e caneta desenham.
+        if (event.button !== 0 || event.pointerType === 'touch') return;
+
+        // Não atrapalha link, botão nem campo: neles o clique continua clique.
+        const target = event.target as Element | null;
+        if (target?.closest('a, button, input, textarea, select, label')) return;
+
+        event.preventDefault();
+
+        const point = pointAt(event);
+        const minDim = Math.min(width, height);
+        live = [{ x: point.x, y: point.y, w: baseWidthAt(minDim) / minDim }];
+        speed = 0;
+        lastAt = performance.now();
+        hero.classList.add('is-inking');
+        schedule();
+      };
+
+      const onPointerMove = (event: PointerEvent) => {
+        if (!live) return;
+
+        const point = pointAt(event);
+        const last = live[live.length - 1];
+        const minDim = Math.min(width, height);
+        const distance = Math.hypot(
+          (point.x - last.x) * width,
+          (point.y - last.y) * height,
+        );
+
+        if (distance < MIN_STEP) return;
+
         const now = performance.now();
+        const elapsed = Math.max(1, now - lastAt);
+        speed = speed * 0.6 + (distance / elapsed) * 0.4;
+        lastAt = now;
 
-        targetX = x;
-        targetY = y;
+        // Devagar engrossa, rápido afina — a pressão que a mão não tem.
+        const speedT = clamp((speed - 0.15) / 2.2, 0, 1);
+        const wanted = (baseWidthAt(minDim) * (1 - 0.45 * speedT)) / minDim;
+        const next = last.w + (wanted - last.w) * 0.35;
 
-        if (!brushReady) {
-          brushX = x;
-          brushY = y;
-          brushReady = true;
-          speed = 0;
-          lastMoveX = x;
-          lastMoveY = y;
-          lastMoveAt = now;
-        } else {
-          // Salto: encerra o traço em vez de ligá-lo ao ponto novo.
-          if (Math.hypot(x - brushX, y - brushY) > TELEPORT_DISTANCE) {
-            trail.length = 0;
-            brushX = x;
-            brushY = y;
-            speed = 0;
-          }
+        live.push({ x: point.x, y: point.y, w: next });
+        if (live.length > MAX_POINTS) live.shift();
 
-          const elapsed = Math.max(1, now - (lastMoveAt || now));
-          const measured = Math.hypot(x - lastMoveX, y - lastMoveY) / elapsed;
-          speed = speed * 0.6 + measured * 0.4;
-          lastMoveX = x;
-          lastMoveY = y;
-          lastMoveAt = now;
-        }
-
-        pointerMovedAt = now;
-
-        // O ponteiro assume: o gesto em andamento para e o rastro é retomado
-        // do zero, para não ligar dois traços com uma linha reta.
-        auto = null;
-        // Depois de mexer o mouse, o pincel automático só volta quando o
-        // usuário para de fato — não no meio de uma pausa curta.
-        nextAutoAt = now + IDLE_BEFORE_AUTO;
-        fadeRate = FADE_LIVE;
-
-        if (trailLife !== POINTER_TRAIL_MS) {
-          trailLife = POINTER_TRAIL_MS;
-          trail.length = 0;
-        }
+        schedule();
       };
 
-      hero.addEventListener('pointermove', onPointerMove, { passive: true });
+      const finish = () => {
+        if (!live) return;
 
-      // ---------- Loop ----------
+        const points = live;
+        live = null;
+        speed = 0;
+        hero.classList.remove('is-inking');
 
-      let visible = true;
-      new IntersectionObserver(([entry]) => {
-        visible = entry.isIntersecting;
-      }).observe(hero);
+        // Ao soltar, a ponta afina: o pincel saindo do papel.
+        if (points.length >= 2) {
+          const minDim = Math.min(width, height);
+          const base = baseWidthAt(minDim);
+          const head = points[points.length - 1];
+          const tail = points[points.length - 2];
 
-      document.addEventListener('visibilitychange', () => {
-        if (document.hidden) clearCanvas();
-      });
+          let dx = (head.x - tail.x) * width;
+          let dy = (head.y - tail.y) * height;
+          const length = Math.hypot(dx, dy) || 1;
+          dx /= length;
+          dy /= length;
 
-      reduceMotion.addEventListener('change', () => {
-        enabled = !reduceMotion.matches;
-        if (!enabled) {
-          auto = null;
-          trail.length = 0;
-          clearCanvas();
-        }
-      });
-
-      let lastFrame = performance.now();
-
-      const loop = (now: number) => {
-        requestAnimationFrame(loop);
-
-        if (!enabled || !visible || document.hidden) {
-          lastFrame = now;
-          return;
-        }
-
-        const dt = clamp(now - lastFrame, 1, 50);
-        lastFrame = now;
-
-        if (resized) {
-          resized = false;
-          trail.length = 0;
-          auto = null;
-          clearCanvas();
-        }
-
-        // A velocidade do ponteiro decai sozinha quando ele para; sem isso a
-        // largura ficava presa no valor da última arremetida.
-        if (now - lastMoveAt > 60) {
-          speed *= Math.pow(0.9, dt / 16.667);
-        }
-
-        const interacting = now - pointerMovedAt < 260;
-
-        // O pincel segue o cursor com um atraso curto (estabilizador).
-        if (interacting || brushReady) {
-          const follow = 1 - Math.pow(0.72, dt / 16.667);
-          brushX += (targetX - brushX) * follow;
-          brushY += (targetY - brushY) * follow;
-
-          if (interacting) {
-            const speedT = clamp((speed - 0.2) / 2.4, 0, 1);
-            const wanted = baseWidth() * (1 - 0.38 * speedT);
-            // A largura entra devagar: evita o "soco" de espessura quando o
-            // cursor reaparece depois de um salto.
-            const previous = trail[trail.length - 1];
-            const pointWidth = previous
-              ? previous.w + (wanted - previous.w) * 0.35
-              : wanted;
-            pushPoint(brushX, brushY, pointWidth, now);
+          const reach = base * 1.4;
+          for (let step = 1; step <= 3; step++) {
+            const t = step / 3;
+            const fade = (1 - t) * (1 - t);
+            points.push({
+              x: head.x + (dx * reach * t) / width,
+              y: head.y + (dy * reach * t) / height,
+              w: head.w * fade,
+            });
           }
+
+          paint(settledCtx, points, true);
+          if (strokes.length >= MAX_STROKES) strokes.shift();
+          strokes.push(points);
         }
 
-        trimTrail(now);
-
-        // Sem ponteiro há um tempo, sem rastro e com a tinta anterior já
-        // quase invisível: começa um gesto calmo em tela limpa.
-        if (
-          !interacting &&
-          !auto &&
-          trail.length === 0 &&
-          inkLeft < 0.02 &&
-          now >= nextAutoAt
-        ) {
-          startAuto(now);
-        }
-
-        stepAuto(now);
-
-        // Fade: o que sai do rastro evapora. Só roda se houver tinta na tela.
-        if (inkLeft > 0.001) {
-          const fade = 1 - Math.pow(fadeRate, dt / 16.667);
-          ctx.globalCompositeOperation = 'destination-out';
-          ctx.globalAlpha = fade;
-          ctx.fillStyle = '#000';
-          ctx.fillRect(0, 0, width, height);
-          ctx.globalCompositeOperation = 'source-over';
-          ctx.globalAlpha = 1;
-          inkLeft *= 1 - fade;
-        }
-
-        drawTrail();
-
-        // Sobrou menos de 0,5% de tinta: ninguém enxerga, então limpa de
-        // verdade. Sem isso o canvas acumulava um véu de resíduo.
-        if (inkLeft > 0 && inkLeft < 0.005) clearCanvas();
+        render();
       };
 
-      requestAnimationFrame(loop);
+      hero.addEventListener('pointerdown', onPointerDown);
+      hero.addEventListener('pointermove', onPointerMove);
+      hero.addEventListener('pointerleave', finish);
+      window.addEventListener('pointerup', finish);
+      window.addEventListener('pointercancel', finish);
+
+      window.addEventListener('resize', resize);
+      if ('ResizeObserver' in window) {
+        new ResizeObserver(resize).observe(hero);
+      }
+
+      resize();
     }
   }
 </script>

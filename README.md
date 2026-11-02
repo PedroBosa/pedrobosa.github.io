@@ -5,7 +5,7 @@ Saída 100% estática: nenhum framework JavaScript roda no navegador.
 
 - Cabeçalho flutuante que vira uma "pílula" com menu ao rolar a página
 - Menu mobile acessível (`aria-expanded`, `aria-controls`, Escape e fechamento ao clicar)
-- Hero com rastro de tinta que segue o cursor (e pincel automático quando o mouse está parado)
+- Hero com tinta de verdade: arraste com o mouse para desenhar pinceladas que ficam na tela
 - Versões `/` (PT-BR) e `/en/` (EN), com `hreflang`, canonical e lembrança do idioma escolhido
 - Demonstração do RadialFlow em vídeo, com poster estático e respeito a `prefers-reduced-motion`
 - Currículo em PDF (PT e EN), e-mail, GitHub e LinkedIn em destaque

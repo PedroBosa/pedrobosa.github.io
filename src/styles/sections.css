@@ -36,9 +36,17 @@
 .hero {
   position: relative;
   overflow: hidden;
+  /* Superfície de desenho: arraste para deixar tinta (ver Hero.astro).
+     Links e botões mantêm o cursor de sempre. */
+  cursor: crosshair;
 }
 
-/* Canvas do rastro de tinta que segue o cursor (ver Hero.astro). */
+/* Enquanto desenha, o arrasto não deve selecionar o texto do hero. */
+.hero.is-inking {
+  user-select: none;
+}
+
+/* Canvas da tinta que fica no hero (ver Hero.astro). */
 .paint {
   position: absolute;
   inset: 0;
