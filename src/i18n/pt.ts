@@ -39,7 +39,7 @@ export const pt = {
     eyebrow: 'TADS @ IFPI · Floriano, Piauí',
     role: 'Desenvolvedor em formação',
     status: 'Buscando estágio em TI',
-    lead: 'Construo utilitários nativos para Windows em C#/.NET — software leve, direto e feito para resolver problemas reais. Busco estágio em TI para levar essa prática a um time.',
+    lead: 'Gosto de resolver problemas com código. Crio ferramentas simples e úteis para o dia a dia, sempre aprendendo a usar a tecnologia que cada projeto pede. Busco um estágio em TI para crescer com um time e contribuir com o que já sei.',
     ctaProjects: 'Ver projetos',
     ctaGithub: 'Perfil no GitHub',
     ctaCv: 'Baixar CV',
@@ -48,7 +48,7 @@ export const pt = {
 
   about: {
     p1: 'Sou Pedro Lucas Ferreira Bosa, desenvolvedor em formação em Floriano, no interior do Piauí. Curso Análise e Desenvolvimento de Sistemas (TADS) no IFPI Campus Floriano e sou Técnico em Informática pela mesma instituição.',
-    p2: 'Meu interesse está no ponto onde o software encosta no dia a dia: utilitários que reduzem atrito, automatizam o repetitivo e desaparecem no fundo da rotina. Gosto de software nativo, leve e direto — e desconfio de soluções infladas para problemas simples.',
+    p2: 'Gosto de software que resolve problemas concretos: ferramentas simples, que funcionam bem e são fáceis de usar. Tenho interesse em desenvolvimento web, bancos de dados e automação, e aprendo melhor colocando a mão na massa. Estou sempre testando ideias novas e tentando entender como as coisas funcionam por dentro.',
     facts: [
       { label: 'Interesses', value: 'C#/.NET · desenvolvimento web · banco de dados · IoT' },
       { label: 'Objetivo', value: 'Uma oportunidade de estágio em TI' },

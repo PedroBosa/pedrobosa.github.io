@@ -38,6 +38,19 @@ li {
   text-wrap: pretty;
 }
 
+/* Blocos longos de leitura: margem direita reta em telas largas. */
+.prose {
+  text-align: left;
+  hyphens: manual;
+}
+
+@media (min-width: 1024px) {
+  .prose {
+    text-align: justify;
+    hyphens: auto;
+  }
+}
+
 a {
   color: inherit;
 }

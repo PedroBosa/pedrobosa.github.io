@@ -41,7 +41,7 @@ export const en: Dictionary = {
     eyebrow: 'TADS @ IFPI · Floriano, Piauí, Brazil',
     role: 'Developer in training',
     status: 'Looking for an IT internship',
-    lead: 'I build native Windows utilities in C#/.NET — lightweight, direct software made to solve real problems. I’m looking for an IT internship where I can put that practice to work with a team.',
+    lead: 'I like solving problems with code. I build simple, useful tools for everyday tasks, always learning whatever technology each project calls for. I’m looking for an IT internship where I can grow with a team and contribute with what I already know.',
     ctaProjects: 'See projects',
     ctaGithub: 'GitHub profile',
     ctaCv: 'Download CV',
@@ -50,7 +50,7 @@ export const en: Dictionary = {
 
   about: {
     p1: 'I’m Pedro Lucas Ferreira Bosa, a developer in training from Floriano, in the countryside of Piauí, Brazil. I’m studying Systems Analysis and Development (TADS) at IFPI Campus Floriano and I hold a Technical Degree in Computing from the same institution.',
-    p2: 'My interest lives where software meets everyday life: utilities that cut friction, automate the repetitive and fade into the background. I like native, lightweight, to-the-point software — and I’m suspicious of bloated solutions to simple problems.',
+    p2: 'I like software that solves concrete problems: simple tools that work well and are easy to use. I’m interested in web development, databases and automation, and I learn best by getting my hands dirty. I’m always testing new ideas and figuring out how things work under the hood.',
     facts: [
       { label: 'Interests', value: 'C#/.NET · web development · databases · IoT' },
       { label: 'Goal', value: 'An IT internship opportunity' },
