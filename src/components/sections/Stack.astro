@@ -1,5 +1,4 @@
 ---
-import Swoosh from '../ui/Swoosh.astro';
 import { t, type Lang } from '../../i18n';
 
 interface Props {
@@ -10,8 +9,6 @@ const { lang } = Astro.props;
 const d = t(lang);
 ---
 <section class="sec" id="stack">
-  <Swoosh variant="b" />
-
   <div class="wrap">
     <h2>{d.nav.stack}</h2>
     <p class="sec-intro">{d.stack.lead}</p>

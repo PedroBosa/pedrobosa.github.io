@@ -123,7 +123,7 @@
 
 #about,
 #stack {
-  overflow: hidden; /* contém os detalhes de fundo (vinil, swoosh) */
+  overflow: hidden; /* contém a malha de fundo da seção */
 }
 
 .about {

@@ -205,32 +205,6 @@
   fill: var(--bg);
 }
 
-/* Traço grosso translúcido ao fundo das seções (ui/Swoosh.astro). */
-.swoosh {
-  position: absolute;
-  width: min(70%, 48rem);
-  height: auto;
-  pointer-events: none;
-  fill: none;
-  stroke-linecap: round;
-  stroke-width: 46;
-  overflow: visible;
-}
-
-.swoosh--a {
-  right: 2%;
-  top: 4%;
-  stroke: var(--accent);
-  opacity: 0.1;
-}
-
-.swoosh--b {
-  left: 2%;
-  bottom: 2%;
-  stroke: var(--ink);
-  opacity: 0.06;
-}
-
 /* Malha de diagramação ao fundo da seção Sobre (ui/Mesh.astro).
    As colunas do grid, cada uma com a sua cor, e as pontas somem num degradê.
    A onda é feita só com atraso de animação por coluna — custo desprezível. */
