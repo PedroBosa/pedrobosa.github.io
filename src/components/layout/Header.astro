@@ -18,11 +18,11 @@ const home = routes[lang];
 
     <nav class="hdr-nav" id="site-nav" aria-label={d.a11y.mainNav} data-menu>
       {NAV_SECTIONS.map((id) => <a href={`${home}#${id}`}>{d.nav[id]}</a>)}
-      <a class="hdr-nav__cta" href={LINKS.repo} target="_blank" rel="noopener noreferrer">{d.header.github}</a>
+      <a class="hdr-nav__cta" href={LINKS.github} target="_blank" rel="noopener noreferrer">{d.header.github}</a>
     </nav>
 
     <div class="hdr-act">
-      <a class="sbtn sbtn--fill" href={LINKS.repo} target="_blank" rel="noopener noreferrer">{d.header.github}</a>
+      <a class="sbtn sbtn--fill" href={LINKS.github} target="_blank" rel="noopener noreferrer">{d.header.github}</a>
     </div>
 
     <a
