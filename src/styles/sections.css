@@ -53,9 +53,9 @@
   z-index: 1;
   display: grid;
   grid-template-columns: auto minmax(16rem, 1fr);
-  align-items: end;
+  align-items: center;
   gap: 2rem 4rem;
-  min-height: min(90svh, 54rem);
+  min-height: 100svh;
   padding-block: 8rem 3.5rem;
 }
 
@@ -87,13 +87,6 @@
   margin-top: 0.9rem;
   font-size: clamp(1.2rem, 2vw, 1.5rem);
   line-height: 1.4;
-}
-
-.proof {
-  max-width: 34ch;
-  margin-top: 0.9rem;
-  color: var(--mute);
-  font: 600 0.88rem / 1.5 var(--display);
 }
 
 .hero .acts {

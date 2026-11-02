@@ -42,7 +42,6 @@ export const en: Dictionary = {
     role: 'Developer in training',
     status: 'Looking for an IT internship',
     lead: 'I build native Windows utilities in C#/.NET — lightweight, direct software made to solve real problems. I’m looking for an IT internship where I can put that practice to work with a team.',
-    proof: 'Author of RadialFlow · 2× top 3 at the CAIS TECH Marathon · 3,200h of technical training',
     ctaProjects: 'See projects',
     ctaGithub: 'GitHub profile',
     ctaCv: 'Download CV',

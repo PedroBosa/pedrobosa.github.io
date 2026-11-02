@@ -40,7 +40,6 @@ export const pt = {
     role: 'Desenvolvedor em formação',
     status: 'Buscando estágio em TI',
     lead: 'Construo utilitários nativos para Windows em C#/.NET — software leve, direto e feito para resolver problemas reais. Busco estágio em TI para levar essa prática a um time.',
-    proof: 'Autor do RadialFlow · 2× Top 3 na Maratona CAIS TECH · 3.200h de formação técnica',
     ctaProjects: 'Ver projetos',
     ctaGithub: 'Perfil no GitHub',
     ctaCv: 'Baixar CV',
