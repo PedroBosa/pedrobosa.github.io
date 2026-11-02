@@ -102,14 +102,6 @@ const [firstName, lastName] = PROFILE.shortName.split(' ');
       let speed = 0;
       let scheduled = false;
 
-      /**
-       * Dica de descoberta: um traço-fantasma que se desenha sozinho logo depois
-       * que a página assenta. Sem texto — não precisa de tradução — e sai de
-       * cena no primeiro traço de verdade. `hintReveal` vai de 0 a 1.
-       */
-      let hintReveal = 0;
-      let hintAlive = true;
-
       const baseWidthAt = (minDim: number) =>
         clamp(minDim * BASE_RATIO, BASE_MIN, BASE_MAX);
 
@@ -227,76 +219,9 @@ const [firstName, lastName] = PROFILE.shortName.split(' ');
         if (tracePath(target, toPixels(points), lift)) target.fill();
       };
 
-      // ---------- Dica de descoberta ----------
-
-      const HINT_ALPHA = 0.3;
-
-      /** Curva da dica, em coordenadas normalizadas: canto vazio inferior do hero. */
-      const HINT_PATH: Point[] = (() => {
-        const control = [
-          { x: 0.04, y: 0.885 },
-          { x: 0.115, y: 0.835 },
-          { x: 0.2, y: 0.895 },
-          { x: 0.29, y: 0.845 },
-        ];
-        const steps = 46;
-        const points: Point[] = [];
-
-        for (let i = 0; i < steps; i++) {
-          const t = i / (steps - 1);
-          const e = t * t * (3 - 2 * t);
-          const u = 1 - e;
-          const [a, b, c, d] = control;
-          points.push({
-            x: u * u * u * a.x + 3 * u * u * e * b.x + 3 * u * e * e * c.x + e * e * e * d.x,
-            y: u * u * u * a.y + 3 * u * u * e * b.y + 3 * u * e * e * c.y + e * e * e * d.y,
-            // bem mais fino que o pincel de verdade: lê como convite, não como tinta.
-            w: BASE_RATIO * 0.5 * Math.pow(Math.sin(Math.PI * t), 0.7),
-          });
-        }
-
-        return points;
-      })();
-
-      const animateHint = () => {
-        if (!hintAlive) return;
-
-        // Com movimento reduzido a dica aparece pronta, sem se desenhar.
-        if (matchMedia('(prefers-reduced-motion: reduce)').matches) {
-          hintReveal = 1;
-          render();
-          return;
-        }
-
-        const startedAt = performance.now();
-        const step = (now: number) => {
-          if (!hintAlive) return;
-          hintReveal = clamp((now - startedAt) / 900, 0, 1);
-          render();
-          if (hintReveal < 1) requestAnimationFrame(step);
-        };
-
-        requestAnimationFrame(step);
-      };
-
-      /** Sai de cena no primeiro traço de verdade. */
-      const dismissHint = () => {
-        if (!hintAlive) return;
-        hintAlive = false;
-        hintReveal = 0;
-      };
-
       const render = () => {
         ctx.clearRect(0, 0, width, height);
         ctx.drawImage(settled, 0, 0, width, height);
-
-        if (hintReveal > 0) {
-          const shown = Math.max(2, Math.round(HINT_PATH.length * hintReveal));
-          ctx.globalAlpha = HINT_ALPHA;
-          paint(ctx, HINT_PATH.slice(0, shown), false);
-          ctx.globalAlpha = 1;
-        }
-
         if (live) paint(ctx, live, false);
       };
 
@@ -361,7 +286,6 @@ const [firstName, lastName] = PROFILE.shortName.split(' ');
         if (target?.closest('a, button, input, textarea, select, label')) return;
 
         event.preventDefault();
-        dismissHint();
 
         const point = pointAt(event);
         const minDim = Math.min(width, height);
@@ -372,18 +296,7 @@ const [firstName, lastName] = PROFILE.shortName.split(' ');
         schedule();
       };
 
-      // A dica só entra quando a pessoa mexe o mouse aqui dentro. Aparecer
-      // sozinha no carregamento virava um risco sem explicação no hero.
-      let hintScheduled = false;
-      const inviteToDraw = () => {
-        if (!hintAlive || hintScheduled) return;
-        hintScheduled = true;
-        setTimeout(animateHint, 300);
-      };
-
       const onPointerMove = (event: PointerEvent) => {
-        inviteToDraw();
-
         if (!live) return;
 
         const point = pointAt(event);
@@ -461,8 +374,6 @@ const [firstName, lastName] = PROFILE.shortName.split(' ');
       // Duplo clique limpa a tela: o hero volta a ser só tipografia.
       hero.addEventListener('dblclick', () => {
         strokes.length = 0;
-        hintAlive = false;
-        hintReveal = 0;
         settledCtx.clearRect(0, 0, width, height);
         render();
       });
