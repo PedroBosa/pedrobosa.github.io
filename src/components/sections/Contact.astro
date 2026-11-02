@@ -22,6 +22,9 @@ const channels = [
   ...(LINKS.linkedin
     ? [{ label: d.contact.linkedinLabel, value: readable(LINKS.linkedin), href: LINKS.linkedin, external: true }]
     : []),
+  ...(LINKS.instagram
+    ? [{ label: d.contact.instagramLabel, value: readable(LINKS.instagram), href: LINKS.instagram, external: true }]
+    : []),
   { label: d.contact.githubLabel, value: PROFILE.githubUser, href: LINKS.github, external: true },
 ];
 ---

@@ -19,6 +19,7 @@ export const LINKS = {
   release: `https://github.com/${PROFILE.githubUser}/RadialFlow/releases/latest`,
   email: 'pedrolucasfbosa@gmail.com',
   linkedin: 'https://www.linkedin.com/in/pedrobosa',
+  instagram: 'https://www.instagram.com/pedrolbosa/',
   cv: {
     pt: '/cv/pedro-bosa-cv-pt.pdf',
     en: '/cv/pedro-bosa-cv-en.pdf',

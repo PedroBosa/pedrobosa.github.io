@@ -39,7 +39,7 @@ export const pt = {
     eyebrow: 'TADS @ IFPI · Floriano, Piauí',
     role: 'Desenvolvedor em formação',
     status: 'Buscando estágio em TI',
-    lead: 'Gosto de resolver problemas com código. Crio ferramentas simples e úteis para o dia a dia, sempre aprendendo a usar a tecnologia que cada projeto pede. Busco um estágio em TI para crescer com um time e contribuir com o que já sei.',
+    lead: 'Curso Análise e Desenvolvimento de Sistemas no IFPI, sou Técnico em Informática e fui 2× Top 3 na Maratona de Programação CAIS TECH. Desenvolvo o RadialFlow, menu radial nativo para Windows em C#/.NET/WPF.',
     ctaProjects: 'Ver projetos',
     ctaGithub: 'Perfil no GitHub',
     ctaCv: 'Baixar CV',
@@ -47,11 +47,10 @@ export const pt = {
   },
 
   about: {
-    p1: 'Sou Pedro Lucas Ferreira Bosa, desenvolvedor em formação em Floriano, no interior do Piauí. Curso Análise e Desenvolvimento de Sistemas (TADS) no IFPI Campus Floriano e sou Técnico em Informática pela mesma instituição.',
-    p2: 'Gosto de software que resolve problemas concretos: ferramentas simples, que funcionam bem e são fáceis de usar. Tenho interesse em desenvolvimento web, bancos de dados e automação, e aprendo melhor colocando a mão na massa. Estou sempre testando ideias novas e tentando entender como as coisas funcionam por dentro.',
+    p1: 'Sou Pedro Lucas Ferreira Bosa, de Floriano, Piauí. Sou Técnico em Informática pelo IFPI Campus Floriano, onde hoje curso Análise e Desenvolvimento de Sistemas (TADS) e fui 2× Top 3 na Maratona de Programação CAIS TECH (2024 e 2025).',
+    p2: 'Meu principal projeto aberto é o RadialFlow, um menu radial para Windows escrito em C#/.NET/WPF que reúne ações de contexto e conversão de arquivos com FFmpeg, Pandoc e LibreOffice. O código tem licença MIT, testes automatizados em CI, releases publicadas e soma 22 estrelas e 4 forks no GitHub.',
     facts: [
       { label: 'Interesses', value: 'C#/.NET · desenvolvimento web · banco de dados · IoT' },
-      { label: 'Objetivo', value: 'Uma oportunidade de estágio em TI' },
       { label: 'Local', value: 'Floriano, Piauí — Brasil' },
     ],
   },
@@ -135,10 +134,10 @@ export const pt = {
         current: false,
       },
       {
-        period: '2025',
+        period: '2023 — 2025',
         title: 'Técnico em Informática',
         org: 'IFPI Campus Floriano',
-        detail: '3.200h',
+        detail: '3.200h · Conclusão em 2025',
         current: false,
       },
       {
@@ -183,10 +182,11 @@ export const pt = {
 
   contact: {
     title: 'Vamos conversar',
-    lead: 'Estou em busca de uma oportunidade de estágio em TI. Se você tem uma vaga, um projeto ou só quer trocar ideia sobre código, me chama.',
+    lead: 'Se você tem uma vaga, um projeto ou só quer trocar ideia sobre código, me chama.',
     emailLabel: 'E-mail',
     linkedinLabel: 'LinkedIn',
     githubLabel: 'GitHub',
+    instagramLabel: 'Instagram',
     ctaEmail: 'Enviar e-mail',
     ctaCv: 'Baixar CV',
     availability: 'Disponível para estágio em TI',

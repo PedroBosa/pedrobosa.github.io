@@ -41,7 +41,7 @@ export const en: Dictionary = {
     eyebrow: 'TADS @ IFPI · Floriano, Piauí, Brazil',
     role: 'Developer in training',
     status: 'Looking for an IT internship',
-    lead: 'I like solving problems with code. I build simple, useful tools for everyday tasks, always learning whatever technology each project calls for. I’m looking for an IT internship where I can grow with a team and contribute with what I already know.',
+    lead: 'I study Systems Analysis and Development at IFPI, hold a Technical Degree in Computing, and placed Top 3 twice at the CAIS TECH Programming Marathon. I build RadialFlow, a native Windows radial menu in C#/.NET/WPF.',
     ctaProjects: 'See projects',
     ctaGithub: 'GitHub profile',
     ctaCv: 'Download CV',
@@ -49,11 +49,10 @@ export const en: Dictionary = {
   },
 
   about: {
-    p1: 'I’m Pedro Lucas Ferreira Bosa, a developer in training from Floriano, in the countryside of Piauí, Brazil. I’m studying Systems Analysis and Development (TADS) at IFPI Campus Floriano and I hold a Technical Degree in Computing from the same institution.',
-    p2: 'I like software that solves concrete problems: simple tools that work well and are easy to use. I’m interested in web development, databases and automation, and I learn best by getting my hands dirty. I’m always testing new ideas and figuring out how things work under the hood.',
+    p1: 'I’m Pedro Lucas Ferreira Bosa, based in Floriano, Piauí, Brazil. I hold a Technical Degree in Computing from IFPI Campus Floriano, where I’m now studying Systems Analysis and Development (TADS) and placed Top 3 twice at the CAIS TECH Programming Marathon (2024 and 2025).',
+    p2: 'My main open-source project is RadialFlow, a Windows radial menu built with C#/.NET/WPF that brings context actions and file conversion via FFmpeg, Pandoc and LibreOffice to the cursor. Released under the MIT license with automated CI tests and published builds, it has 22 stars and 4 forks on GitHub.',
     facts: [
       { label: 'Interests', value: 'C#/.NET · web development · databases · IoT' },
-      { label: 'Goal', value: 'An IT internship opportunity' },
       { label: 'Location', value: 'Floriano, Piauí — Brazil' },
     ],
   },
@@ -137,10 +136,10 @@ export const en: Dictionary = {
         current: false,
       },
       {
-        period: '2025',
+        period: '2023 — 2025',
         title: 'Technical Degree in Computing',
         org: 'IFPI Campus Floriano',
-        detail: '3,200h',
+        detail: '3,200h · Completed in 2025',
         current: false,
       },
       {
@@ -185,10 +184,11 @@ export const en: Dictionary = {
 
   contact: {
     title: 'Let’s talk',
-    lead: 'I’m looking for an IT internship. If you have a role, a project, or just want to talk code, reach out.',
+    lead: 'If you have a role, a project, or just want to talk code, reach out.',
     emailLabel: 'Email',
     linkedinLabel: 'LinkedIn',
     githubLabel: 'GitHub',
+    instagramLabel: 'Instagram',
     ctaEmail: 'Send email',
     ctaCv: 'Download CV',
     availability: 'Available for an IT internship',
