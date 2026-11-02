@@ -32,22 +32,21 @@ const personLd = {
   '@type': 'Person',
   name: PROFILE.fullName,
   alternateName: PROFILE.shortName,
-  url: site.href,
+  url: ogUrl,
   image: ogImage,
   jobTitle: d.meta.jobTitle,
   description: d.meta.description,
-  email: LINKS.email,
   sameAs: [LINKS.github, LINKS.linkedin].filter(Boolean),
   address: {
     '@type': 'PostalAddress',
     addressLocality: 'Floriano',
-    addressRegion: 'PI',
+    addressRegion: 'Piauí',
     addressCountry: 'BR',
   },
-  alumniOf: [
-    { '@type': 'CollegeOrUniversity', name: 'IFPI Campus Floriano' },
-    { '@type': 'EducationalOrganization', name: 'SENAI' },
-  ],
+  alumniOf: {
+    '@type': 'CollegeOrUniversity',
+    name: 'IFPI Campus Floriano',
+  },
   knowsAbout: ['C#', '.NET', 'WPF', 'Astro', 'SQL', 'IoT'],
 };
 ---

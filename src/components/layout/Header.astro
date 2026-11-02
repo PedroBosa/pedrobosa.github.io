@@ -28,7 +28,7 @@ const home = routes[lang];
     <a
       class="lang"
       href={routes[other]}
-      hreflang={other}
+      hreflang={t(other).meta.lang}
       title={`${d.header.language}: ${d.header.other}`}
       data-lang-toggle
       data-target-lang={other}

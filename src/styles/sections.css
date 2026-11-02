@@ -81,7 +81,6 @@
   font: 700 0.78rem var(--display);
   letter-spacing: 0.12em;
   text-transform: uppercase;
-  opacity: 0.85;
 }
 
 .status {
@@ -231,6 +230,10 @@
   background: #0a1430;
 }
 
+.feat-media picture {
+  display: block;
+}
+
 .feat-video {
   display: none;
 }
@@ -239,6 +242,7 @@
   display: block;
 }
 
+.feat-media.is-video picture,
 .feat-media.is-video .feat-poster {
   display: none;
 }
@@ -254,6 +258,7 @@
     display: none !important;
   }
 
+  .feat-media picture,
   .feat-media .feat-poster {
     display: block !important;
   }

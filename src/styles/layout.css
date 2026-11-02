@@ -151,11 +151,14 @@
   border-radius: 9999px;
   font: 600 0.8rem var(--display);
   text-decoration: none;
-  opacity: 0.85;
 }
 
 .lang:hover {
-  opacity: 1;
+  background: rgba(255, 255, 255, 0.14);
+}
+
+.hdr.is-scrolled .lang:hover {
+  background: rgba(14, 27, 61, 0.07);
 }
 
 /* CTA do GitHub dentro do menu mobile (no desktop ele já aparece em .hdr-act). */

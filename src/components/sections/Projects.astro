@@ -1,7 +1,9 @@
 ---
+import { Picture } from 'astro:assets';
 import Edge from '../ui/Edge.astro';
 import { t, type Lang } from '../../i18n';
 import { LINKS, type RepoStats } from '../../data/site';
+import demoPoster from '../../assets/radialflow-demo-poster.png';
 
 interface Props {
   lang: Lang;
@@ -14,7 +16,6 @@ const featured = d.projects.featured;
 const stats = d.projects.stats;
 
 const demo = {
-  poster: '/projects/radialflow-demo-poster.png',
   mp4: '/projects/radialflow-demo.mp4',
   webm: '/projects/radialflow-demo.webm',
 };
@@ -42,7 +43,6 @@ const demo = {
           loop
           playsinline
           preload="metadata"
-          poster={demo.poster}
           width="760"
           height="500"
           aria-label={featured.demoAlt}
@@ -50,16 +50,16 @@ const demo = {
         >
           <source src={demo.mp4} type="video/mp4" />
           <source src={demo.webm} type="video/webm" />
-          {/* Só aparece em navegador sem suporte a <video>; o poster basta. */}
-          <img src={demo.poster} alt={featured.demoAlt} width="760" height="500" loading="lazy" />
         </video>
-        <img
+        <Picture
           class="feat-poster"
-          src={demo.poster}
+          src={demoPoster}
+          formats={['avif', 'webp']}
           alt={featured.demoAlt}
-          width="760"
-          height="500"
+          width={760}
+          height={500}
           loading="lazy"
+          decoding="async"
           data-demo-poster
         />
         <figcaption>{featured.demoCaption}</figcaption>

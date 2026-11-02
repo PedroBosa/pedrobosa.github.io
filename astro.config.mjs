@@ -10,7 +10,17 @@ export default defineConfig({
   // Saída 100% estática: nenhum framework JavaScript no cliente.
   output: 'static',
 
-  integrations: [sitemap()],
+  integrations: [
+    sitemap({
+      i18n: {
+        defaultLocale: 'pt',
+        locales: {
+          pt: 'pt-BR',
+          en: 'en',
+        },
+      },
+    }),
+  ],
 
   i18n: {
     defaultLocale: 'pt',
