@@ -228,49 +228,29 @@
   opacity: 0.06;
 }
 
-/* Disco de vinil ao fundo da seção Sobre (ui/Vinyl.astro).
-   O tema musical entra como textura, no mesmo tom baixo dos outros detalhes:
-   disco preenchido bem claro e sulcos na cor do fundo, que é o que faz a forma
-   ler como vinil. Fica encostado no canto para não cruzar o texto. */
-.vinyl {
+/* Pauta musical ao fundo da seção Sobre (ui/Staff.astro).
+   Atravessa a seção inteira e as pontas somem num degradê, para nada parecer
+   cortado. Opacidade baixa: é textura, não pode competir com o texto. */
+.staff {
   position: absolute;
-  top: -16%;
-  right: -10%;
-  width: clamp(12rem, 30vw, 24rem);
+  top: 50%;
+  left: 0;
+  width: 100%;
   height: auto;
+  transform: translateY(-50%);
   pointer-events: none;
-  overflow: visible;
+  -webkit-mask-image: linear-gradient(to right, transparent, #000 12%, #000 88%, transparent);
+  mask-image: linear-gradient(to right, transparent, #000 12%, #000 88%, transparent);
 }
 
-.vinyl-disc {
-  fill: var(--ink);
-  stroke: none;
-  opacity: 0.065;
+.staff-lines line {
+  stroke: var(--ink);
+  stroke-width: 1;
+  opacity: 0.1;
 }
 
-/* Sulcos "escavados": cor do fundo, não tinta. */
-.vinyl-grooves circle {
-  fill: none;
-  stroke: var(--bg);
-  stroke-width: 1.1;
-  opacity: 0.45;
-}
-
-.vinyl-label {
+.staff-notes {
   fill: var(--accent);
   stroke: none;
-  opacity: 0.12;
-}
-
-.vinyl-hole {
-  fill: var(--bg);
-}
-
-/* No celular o disco encolhe e sai mais para o canto, longe do texto. */
-@media (max-width: 960px) {
-  .vinyl {
-    top: -8%;
-    right: -16%;
-    width: clamp(9rem, 42vw, 15rem);
-  }
+  opacity: 0.18;
 }

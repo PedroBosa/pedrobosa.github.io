@@ -1,0 +1,48 @@
+---
+/**
+ * Pauta musical ao fundo da seção Sobre.
+ *
+ * Cinco linhas atravessam a seção inteira e uma melodia curta corre sobre elas.
+ * As pontas somem num degradê (mask no CSS), então nada parece cortado.
+ *
+ * É textura, não conteúdo: opacidade baixíssima, `aria-hidden` e
+ * `pointer-events: none`. Posição e cores ficam em `.staff` (components.css).
+ */
+---
+<svg class="staff" viewBox="0 0 1440 300" aria-hidden="true" focusable="false">
+  <defs>
+    <!-- Semínima: cabeça + haste. -->
+    <g id="staff-note">
+      <ellipse cx="0" cy="0" rx="9" ry="6.6" transform="rotate(-20)" />
+      <rect x="7.2" y="-48" width="2.6" height="48" rx="1.3" />
+    </g>
+    <!-- Colcheia: a mesma nota com bandeirola. -->
+    <g id="staff-note8">
+      <ellipse cx="0" cy="0" rx="9" ry="6.6" transform="rotate(-20)" />
+      <rect x="7.2" y="-48" width="2.6" height="48" rx="1.3" />
+      <path d="M9.8 -48 C23 -40 23 -25 12.5 -16 C19 -30 16.5 -38 9.8 -39.5 Z" />
+    </g>
+  </defs>
+
+  <g class="staff-lines">
+    <line x1="0" y1="90" x2="1440" y2="90" />
+    <line x1="0" y1="120" x2="1440" y2="120" />
+    <line x1="0" y1="150" x2="1440" y2="150" />
+    <line x1="0" y1="180" x2="1440" y2="180" />
+    <line x1="0" y1="210" x2="1440" y2="210" />
+  </g>
+
+  <g class="staff-notes">
+    <use href="#staff-note" x="150" y="180" />
+    <use href="#staff-note8" x="255" y="165" />
+    <use href="#staff-note" x="360" y="150" />
+    <use href="#staff-note" x="465" y="135" />
+    <use href="#staff-note8" x="570" y="120" />
+    <use href="#staff-note" x="690" y="135" />
+    <use href="#staff-note" x="795" y="150" />
+    <use href="#staff-note8" x="900" y="180" />
+    <use href="#staff-note" x="1020" y="195" />
+    <use href="#staff-note" x="1125" y="180" />
+    <use href="#staff-note8" x="1230" y="165" />
+  </g>
+</svg>
