@@ -3,6 +3,9 @@ name: Deploy do site
 on:
   push:
     branches: [main]
+  schedule:
+    # Atualiza as métricas do GitHub toda segunda-feira às 06:00 UTC.
+    - cron: '0 6 * * 1'
   workflow_dispatch:
 
 permissions:
@@ -31,21 +34,16 @@ jobs:
       - name: Instalar dependências
         run: npm ci
 
-      - name: Verificar tipos
+      - name: Verificar tipos (astro check)
         run: npm run check
 
+      - name: Lint (ESLint)
+        run: npm run lint
+
       - name: Build do Astro
-        run: npm run build
+        uses: withastro/action@v5
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
-      - name: Configurar o Pages
-        uses: actions/configure-pages@v6
-
-      - name: Empacotar o artefato
-        uses: actions/upload-pages-artifact@v5
-        with:
-          path: ./dist
 
   deploy:
     needs: build
