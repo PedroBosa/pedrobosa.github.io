@@ -372,7 +372,18 @@ const [firstName, lastName] = PROFILE.shortName.split(' ');
         schedule();
       };
 
+      // A dica só entra quando a pessoa mexe o mouse aqui dentro. Aparecer
+      // sozinha no carregamento virava um risco sem explicação no hero.
+      let hintScheduled = false;
+      const inviteToDraw = () => {
+        if (!hintAlive || hintScheduled) return;
+        hintScheduled = true;
+        setTimeout(animateHint, 300);
+      };
+
       const onPointerMove = (event: PointerEvent) => {
+        inviteToDraw();
+
         if (!live) return;
 
         const point = pointAt(event);
@@ -462,9 +473,6 @@ const [firstName, lastName] = PROFILE.shortName.split(' ');
       }
 
       resize();
-
-      // A dica entra depois da animação de entrada do nome, para não competir.
-      setTimeout(animateHint, 1100);
     }
   }
 </script>
