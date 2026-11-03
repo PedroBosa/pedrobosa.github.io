@@ -7,7 +7,7 @@ export const pt = {
     lang: 'pt-BR',
     title: 'Pedro Bosa — Desenvolvedor em formação',
     description:
-      'Portfólio de Pedro Lucas Ferreira Bosa, desenvolvedor em formação (TADS @ IFPI). Ferramentas pequenas que resolvem problemas reais — C#/.NET, web, banco de dados e IoT.',
+      'Portfólio de Pedro Lucas Ferreira Bosa, estudante de TADS no IFPI e criador do RadialFlow. Projetos em C#/.NET, desenvolvimento web, banco de dados e IoT.',
     ogLocale: 'pt_BR',
     jobTitle: 'Desenvolvedor em formação',
   },
@@ -39,7 +39,7 @@ export const pt = {
     eyebrow: 'TADS @ IFPI · Floriano, Piauí',
     role: 'Desenvolvedor em formação',
     status: 'Buscando estágio em TI',
-    lead: 'Curso Análise e Desenvolvimento de Sistemas no IFPI, sou Técnico em Informática e fui 2× Top 3 na Maratona de Programação CAIS TECH. Desenvolvo o RadialFlow, menu radial nativo para Windows em C#/.NET/WPF.',
+    lead: 'Estudo Análise e Desenvolvimento de Sistemas no IFPI Floriano e construo software para desktop e web. Criei o RadialFlow, menu radial nativo para Windows em C#/.NET/WPF.',
     ctaProjects: 'Ver projetos',
     ctaGithub: 'Perfil no GitHub',
     ctaCv: 'Baixar CV',
@@ -47,8 +47,8 @@ export const pt = {
   },
 
   about: {
-    p1: 'Sou Pedro Lucas Ferreira Bosa, de Floriano, Piauí. Sou Técnico em Informática pelo IFPI Campus Floriano, onde hoje curso Análise e Desenvolvimento de Sistemas (TADS) e fui 2× Top 3 na Maratona de Programação CAIS TECH (2024 e 2025).',
-    p2: 'Meu principal projeto aberto é o RadialFlow, um menu radial para Windows escrito em C#/.NET/WPF que reúne ações de contexto e conversão de arquivos com FFmpeg, Pandoc e LibreOffice. O código tem licença MIT, testes automatizados em CI, releases publicadas e soma 22 estrelas e 4 forks no GitHub.',
+    p1: 'Me chamo Pedro Lucas Ferreira Bosa e moro em Floriano, no Piauí. Me formei Técnico em Informática pelo IFPI Campus Floriano, onde hoje curso Análise e Desenvolvimento de Sistemas (TADS) e fiquei duas vezes no Top 3 da Maratona de Programação CAIS TECH (2024 e 2025).',
+    p2: 'No código aberto, mantenho o RadialFlow: um menu radial para Windows feito em C#/.NET/WPF que abre ações de contexto no cursor e converte arquivos usando FFmpeg, Pandoc e LibreOffice. O projeto tem licença MIT, testes automatizados em CI, instaladores publicados e conta com 22 estrelas e 4 forks no GitHub.',
     facts: [
       { label: 'Interesses', value: 'C#/.NET · desenvolvimento web · banco de dados · IoT' },
       { label: 'Local', value: 'Floriano, Piauí — Brasil' },
@@ -57,18 +57,18 @@ export const pt = {
 
   projects: {
     featuredTag: 'Projeto em destaque',
-    lead: 'Do projeto em destaque aos experimentos menores — código aberto, testado e documentado.',
+    lead: 'Aplicações e experimentos que desenvolvi e publiquei com código aberto no GitHub.',
     tagsLabel: 'Tecnologias do RadialFlow',
     featured: {
       name: 'RadialFlow',
       tagline: 'O menu radial do Windows.',
       description:
-        'Segure o botão direito, arraste e escolha: os comandos do arquivo ou da pasta aparecem exatamente onde o cursor está, sem janelas extras e sem menus aninhados. Ação em dois movimentos, sem tirar a mão do mouse — com conversão de arquivos via FFmpeg, Pandoc e LibreOffice, tudo nativo em C#/.NET/WPF e coberto por testes automatizados.',
+        'Criei o RadialFlow para encurtar tarefas repetitivas no Windows Explorer. Ao segurar o botão direito do mouse, os comandos do arquivo ou da pasta abrem em círculo ao redor do cursor: basta arrastar na direção desejada e soltar. Além de atalhos de sistema, ele integra FFmpeg, Pandoc e LibreOffice para converter áudio, vídeo e documentos direto pelo menu, sem abrir janelas extras.',
       highlights: [
-        'Interação em dois movimentos: segurar, arrastar e soltar',
-        'Conversão de arquivos com FFmpeg, Pandoc e LibreOffice',
-        'Nativo em C#/.NET/WPF — leve, sem Electron',
-        'Testes automatizados rodando em integração contínua',
+        'Acionamento direto no cursor: segurar o botão direito, arrastar e soltar',
+        'Conversão local de mídia e documentos via FFmpeg, Pandoc e LibreOffice',
+        'Aplicação desktop nativa em C#/.NET/WPF, sem depender de Electron',
+        'Testes automatizados e geração de releases via GitHub Actions',
       ],
       tags: ['Windows', 'C#', '.NET', 'WPF', 'Produtividade'],
       demoAlt: 'Demonstração do RadialFlow em uso: o menu radial abrindo ao redor do cursor',
@@ -76,15 +76,15 @@ export const pt = {
       caseStudy: [
         {
           label: 'Problema',
-          text: 'Menus de contexto do Windows escondem ações em submenus e exigem vários cliques para tarefas repetitivas.',
+          text: 'O menu de contexto padrão do Windows esconde opções frequentes em submenus lentos e não converte arquivos nativamente.',
         },
         {
           label: 'Abordagem',
-          text: 'Menu radial nativo em C#/.NET/WPF, aberto no cursor, com conversão de arquivos via FFmpeg, Pandoc e LibreOffice.',
+          text: 'Desenvolvi uma interface radial em WPF acionada no ponteiro do mouse, conectada a ferramentas de linha de comando (FFmpeg, Pandoc e LibreOffice).',
         },
         {
           label: 'Resultado',
-          text: 'Ação em dois movimentos, sem janelas extras; código aberto, testado em CI e com releases para Windows.',
+          text: 'Execução imediata em um único gesto, distribuída sob licença MIT com instalador para Windows e pipeline de testes em CI.',
         },
       ],
       ctaGithub: 'Ver no GitHub',
@@ -101,14 +101,14 @@ export const pt = {
       {
         name: 'ssa-kotz-dublagem-ptbr',
         description:
-          'Dublagem PT-BR fan-made atualizada para os SoundBanks Wwise v128 de Saint Seiya Awakening.',
+          'Pacote de modificação de áudio com a dublagem brasileira para Saint Seiya Awakening, portado para os SoundBanks Wwise v128.',
         tags: ['Wwise', 'Áudio', 'PT-BR'],
         link: 'https://github.com/PedroBosa/ssa-kotz-dublagem-ptbr',
       },
       {
         name: 'chrispincelmagico',
         description:
-          'Experimento em JavaScript: um pincel para desenhar livremente direto no navegador.',
+          'Quadro de desenho interativo para navegador, escrito em JavaScript puro com manipulação direta de eventos de mouse e toque.',
         tags: ['JavaScript', 'Web'],
         link: 'https://github.com/PedroBosa/chrispincelmagico',
       },
@@ -117,7 +117,7 @@ export const pt = {
   },
 
   stack: {
-    lead: 'Tecnologias e ferramentas que uso e estudo, organizadas por área.',
+    lead: 'Linguagens e ferramentas que utilizo nos meus projetos e na graduação.',
     groups: [
       {
         title: 'Linguagens',
@@ -137,7 +137,7 @@ export const pt = {
       },
       { title: 'Produtividade', items: ['Pacote Office'] },
     ],
-    note: 'Aprendendo e praticando continuamente — esta lista cresce junto com os projetos.',
+    note: 'No dia a dia, meu foco principal é desenvolvimento desktop com C#/.NET, aplicações web e banco de dados SQL.',
   },
 
   education: {
@@ -191,7 +191,7 @@ export const pt = {
 
   contact: {
     title: 'Vamos conversar',
-    lead: 'Se você tem uma vaga, um projeto ou só quer trocar ideia sobre código, me chama.',
+    lead: 'Estou aberto a oportunidades de estágio em TI, projetos em conjunto ou uma boa conversa sobre desenvolvimento. Pode me chamar por e-mail ou pelos links ao lado.',
     emailLabel: 'E-mail',
     linkedinLabel: 'LinkedIn',
     githubLabel: 'GitHub',
@@ -203,7 +203,7 @@ export const pt = {
   },
 
   footer: {
-    builtWith: 'Feito com Astro, sem framework rodando no cliente.',
+    builtWith: 'Desenvolvido com Astro e CSS puro — 100% estático.',
     top: 'Voltar ao topo',
   },
 };

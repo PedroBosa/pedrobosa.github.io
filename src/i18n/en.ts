@@ -9,7 +9,7 @@ export const en: Dictionary = {
     lang: 'en',
     title: 'Pedro Bosa — Developer in training',
     description:
-      'Portfolio of Pedro Lucas Ferreira Bosa, a developer in training (TADS @ IFPI). Small tools that solve real problems — C#/.NET, web, databases and IoT.',
+      'Portfolio of Pedro Lucas Ferreira Bosa — Systems Analysis and Development student at IFPI and creator of RadialFlow. Projects in C#/.NET, web, databases, and IoT.',
     ogLocale: 'en_US',
     jobTitle: 'Developer in training',
   },
@@ -41,7 +41,7 @@ export const en: Dictionary = {
     eyebrow: 'TADS @ IFPI · Floriano, Piauí, Brazil',
     role: 'Developer in training',
     status: 'Looking for an IT internship',
-    lead: 'I study Systems Analysis and Development at IFPI, hold a Technical Degree in Computing, and placed Top 3 twice at the CAIS TECH Programming Marathon. I build RadialFlow, a native Windows radial menu in C#/.NET/WPF.',
+    lead: 'I study Systems Analysis and Development at IFPI Floriano and build desktop and web software. Creator of RadialFlow, a native Windows radial menu in C#/.NET/WPF.',
     ctaProjects: 'See projects',
     ctaGithub: 'GitHub profile',
     ctaCv: 'Download CV',
@@ -49,8 +49,8 @@ export const en: Dictionary = {
   },
 
   about: {
-    p1: 'I’m Pedro Lucas Ferreira Bosa, based in Floriano, Piauí, Brazil. I hold a Technical Degree in Computing from IFPI Campus Floriano, where I’m now studying Systems Analysis and Development (TADS) and placed Top 3 twice at the CAIS TECH Programming Marathon (2024 and 2025).',
-    p2: 'My main open-source project is RadialFlow, a Windows radial menu built with C#/.NET/WPF that brings context actions and file conversion via FFmpeg, Pandoc and LibreOffice to the cursor. Released under the MIT license with automated CI tests and published builds, it has 22 stars and 4 forks on GitHub.',
+    p1: 'I’m Pedro Lucas Ferreira Bosa, based in Floriano, Piauí, Brazil. I graduated as a Computing Technician from IFPI Campus Floriano, where I now study Systems Analysis and Development (TADS) and placed in the Top 3 twice at the CAIS TECH Programming Marathon (2024 and 2025).',
+    p2: 'In open source, I maintain RadialFlow — a Windows radial menu written in C#/.NET/WPF that puts context actions at the cursor and converts files through FFmpeg, Pandoc, and LibreOffice. It’s MIT-licensed, tested in CI, shipped with Windows installers, and has 22 stars and 4 forks on GitHub.',
     facts: [
       { label: 'Interests', value: 'C#/.NET · web development · databases · IoT' },
       { label: 'Location', value: 'Floriano, Piauí — Brazil' },
@@ -59,18 +59,18 @@ export const en: Dictionary = {
 
   projects: {
     featuredTag: 'Featured project',
-    lead: 'From the flagship project to smaller experiments — open source, tested and documented.',
+    lead: 'Open-source applications and smaller experiments I built and published on GitHub.',
     tagsLabel: 'RadialFlow technologies',
     featured: {
       name: 'RadialFlow',
       tagline: 'The Windows radial menu.',
       description:
-        'Hold the right mouse button, drag and choose: the commands for the file or folder appear exactly where the cursor is, with no extra windows and no nested menus. Two movements, without lifting your hand off the mouse — with file conversion through FFmpeg, Pandoc and LibreOffice, all native in C#/.NET/WPF and covered by automated tests.',
+        'I built RadialFlow to cut down repetitive steps in Windows Explorer. Holding the right mouse button opens file and folder commands in a ring around the cursor — just drag toward an action and release. Beyond system shortcuts, it integrates FFmpeg, Pandoc, and LibreOffice to convert audio, video, and documents straight from the menu without opening extra windows.',
       highlights: [
-        'Two-movement interaction: hold, drag and release',
-        'File conversion with FFmpeg, Pandoc and LibreOffice',
-        'Native C#/.NET/WPF — lightweight, no Electron',
-        'Automated tests running in continuous integration',
+        'Cursor-centered trigger: hold right-click, drag, and release',
+        'Local media and document conversion via FFmpeg, Pandoc, and LibreOffice',
+        'Native C#/.NET/WPF desktop app with no Electron overhead',
+        'Automated test suite and release builds on GitHub Actions',
       ],
       tags: ['Windows', 'C#', '.NET', 'WPF', 'Productivity'],
       demoAlt: 'RadialFlow demo: the radial menu opening around the cursor',
@@ -78,15 +78,15 @@ export const en: Dictionary = {
       caseStudy: [
         {
           label: 'Problem',
-          text: 'Windows context menus hide actions in submenus and take several clicks for repetitive tasks.',
+          text: 'The default Windows context menu buries frequent actions inside nested submenus and lacks built-in file conversion.',
         },
         {
           label: 'Approach',
-          text: 'A native C#/.NET/WPF radial menu opened at the cursor, with file conversion through FFmpeg, Pandoc and LibreOffice.',
+          text: 'I built a pointer-centered radial UI in WPF wired to command-line tools (FFmpeg, Pandoc, and LibreOffice).',
         },
         {
           label: 'Result',
-          text: 'Action in two movements, with no extra windows; open source, CI-tested and shipped as Windows releases.',
+          text: 'Single-gesture execution, shipped under the MIT license with a Windows installer and a CI test pipeline.',
         },
       ],
       ctaGithub: 'View on GitHub',
@@ -103,13 +103,14 @@ export const en: Dictionary = {
       {
         name: 'ssa-kotz-dublagem-ptbr',
         description:
-          'Fan-made Brazilian Portuguese dub, updated for the Wwise v128 SoundBanks of Saint Seiya Awakening.',
+          'Brazilian Portuguese voiceover mod package for Saint Seiya Awakening, ported to Wwise v128 SoundBanks.',
         tags: ['Wwise', 'Audio', 'PT-BR'],
         link: 'https://github.com/PedroBosa/ssa-kotz-dublagem-ptbr',
       },
       {
         name: 'chrispincelmagico',
-        description: 'A JavaScript experiment: a brush for drawing freely right in the browser.',
+        description:
+          'Interactive browser drawing board written in vanilla JavaScript with direct mouse and touch event handling.',
         tags: ['JavaScript', 'Web'],
         link: 'https://github.com/PedroBosa/chrispincelmagico',
       },
@@ -118,7 +119,7 @@ export const en: Dictionary = {
   },
 
   stack: {
-    lead: 'Technologies and tools I use and study, organised by area.',
+    lead: 'Languages and tools I work with across my projects and coursework.',
     groups: [
       {
         title: 'Languages',
@@ -126,7 +127,7 @@ export const en: Dictionary = {
       },
       { title: 'Desktop & .NET', items: ['.NET', 'WPF', 'XAML'] },
       { title: 'Web', items: ['HTML', 'CSS', 'Astro'] },
-      { title: 'Data', items: ['SQL', 'Data modelling'] },
+      { title: 'Data', items: ['SQL', 'Data modeling'] },
       { title: 'IoT & Systems', items: ['ESP32', 'PlatformIO'] },
       {
         title: 'Tooling',
@@ -138,7 +139,7 @@ export const en: Dictionary = {
       },
       { title: 'Productivity', items: ['Office suite'] },
     ],
-    note: 'Learning and practising continuously — this list grows along with the projects.',
+    note: 'Day to day, my main focus is C#/.NET desktop development, web applications, and SQL databases.',
   },
 
   education: {
@@ -182,7 +183,7 @@ export const en: Dictionary = {
     ],
     awardsTitle: 'Awards',
     awards: [
-      { title: '2× top 3 — CAIS TECH Programming Marathon', detail: '2024 and 2025' },
+      { title: '2× Top 3 — CAIS TECH Programming Marathon', detail: '2024 and 2025' },
       {
         title: 'Projects exhibited at the National Science and Technology Week',
         detail: 'IFPI project showcase',
@@ -192,7 +193,7 @@ export const en: Dictionary = {
 
   contact: {
     title: 'Let’s talk',
-    lead: 'If you have a role, a project, or just want to talk code, reach out.',
+    lead: 'I’m open to IT internship opportunities, collaborative projects, or a conversation about software development. Feel free to reach out by email or through the links beside this.',
     emailLabel: 'Email',
     linkedinLabel: 'LinkedIn',
     githubLabel: 'GitHub',
@@ -204,7 +205,7 @@ export const en: Dictionary = {
   },
 
   footer: {
-    builtWith: 'Built with Astro, no framework running on the client.',
+    builtWith: 'Built with Astro and vanilla CSS — 100% static.',
     top: 'Back to top',
   },
 };
