@@ -108,8 +108,8 @@ export const pt = {
       {
         name: 'chrispincelmagico',
         description:
-          'Quadro de desenho interativo para navegador, escrito em JavaScript puro com manipulação direta de eventos de mouse e toque.',
-        tags: ['JavaScript', 'Web'],
+          'Site institucional para o studio Chris Pincel Mágico em Floriano e Barão de Grajaú, desenvolvido com Next.js 16, React 19 e Tailwind CSS 4.',
+        tags: ['Next.js', 'React', 'Tailwind CSS'],
         link: 'https://github.com/PedroBosa/chrispincelmagico',
       },
     ],

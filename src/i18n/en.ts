@@ -110,8 +110,8 @@ export const en: Dictionary = {
       {
         name: 'chrispincelmagico',
         description:
-          'Interactive browser drawing board written in vanilla JavaScript with direct mouse and touch event handling.',
-        tags: ['JavaScript', 'Web'],
+          'Institutional website for beauty studio Chris Pincel Mágico in Floriano and Barão de Grajaú, built with Next.js 16, React 19, and Tailwind CSS 4.',
+        tags: ['Next.js', 'React', 'Tailwind CSS'],
         link: 'https://github.com/PedroBosa/chrispincelmagico',
       },
     ],
